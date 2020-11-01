@@ -1,0 +1,12 @@
+npm install express
+npm install socket.io
+npm install jimp
+
+
+!! dépixéliser l'image au fur et a mesure !!
+!! récuperer image sur internet + son nom -> save l'image puis la delete lorsque trouvé !!
+!! faire un dictionnaire !!
+!! tester si le mot == image !!
+
+!! page pour choisir l'identifiant si celui-ci est pas déjà co !!
+

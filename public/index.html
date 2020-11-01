@@ -1,0 +1,45 @@
+<!-- <!doctype html> -->
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Accueil | GuessWut</title>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link title="style" rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<body>
+    <div id="main">
+        <div id="image"></div>        
+        <div id="message"></div>
+    </div>
+    <div id="reponse">
+        <form action="">
+            <input id="guess" autocomplete="off" /><button>GUESS</button>
+        </form>
+    </div>
+    <script>
+        $(function () {
+            var socket = io();
+            socket.on('message', (socket_msg) => {
+                $('#message').html(socket_msg);
+            });
+            socket.on('image', (socket_img) => {
+                var image = new Image();
+                image.src = 'data:image/png;base64,' + socket_img;
+                $("#image").html(image);
+            })
+            $('form').submit(function (e) {
+                e.preventDefault(); 
+                socket.emit('guess', $('#guess').val());
+                $('#guess').val('');
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

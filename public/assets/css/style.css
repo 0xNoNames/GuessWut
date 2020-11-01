@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: grey;
+    height: 100vh;
+    width: 100wh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: 10px arial;
+}
+
+#reponse {
+    position: absolute;
+    bottom: 0;
+}
+
+#main {
+    text-align: center;
+    font-size: 25px;
+    color : white;
+}
