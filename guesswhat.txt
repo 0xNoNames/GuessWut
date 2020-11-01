@@ -3,10 +3,14 @@ npm install socket.io
 npm install jimp
 
 
-!! dépixéliser l'image au fur et a mesure !!
-!! récuperer image sur internet + son nom -> save l'image puis la delete lorsque trouvé !!
-!! faire un dictionnaire !!
+!! rï¿½cuperer image sur internet + son nom -> save l'image puis la delete lorsque trouvï¿½ !!
+!! faire un dictionnaire (dans bdd) !!
 !! tester si le mot == image !!
 
-!! page pour choisir l'identifiant si celui-ci est pas déjà co !!
+!! page pour choisir l'identifiant si celui-ci est pas dï¿½jï¿½ co !!
 
+!! trouved by : "user" <br> ct "name" !!
+
+!! gens connected !!
+
+!! leaderboard !!

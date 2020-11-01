@@ -7,6 +7,7 @@ const io = require('socket.io')(server);
 
 const clientarray = {}
 var pixel_state = 0;
+var game_state = 1;
 
 ////////////////////////////////
 
@@ -28,7 +29,6 @@ function getRandomIntInclusive(min, max) {
 
 function pixel(bool = 1) {
   if (bool) {
-    console.log(pixel_state)
     if (pixel_state > 85 && pixel_state < 100) {
       Jimp.read(__dirname + '/public/images/val.png').then(image => {
         pixel_state += 0.25;
@@ -71,24 +71,30 @@ function pixel(bool = 1) {
 /////////////////////////////////////////////////
 
 
-var interval_img_guess = setInterval(() => pixel(), 100)
+var interval_img_guess = setInterval(() => {
+  pixel();
+}, 100)
 
 io.on('connection', (ws) => {
   ws.on('username', (msg) => {
     clientarray.append(msg)
   })
   ws.on('guess', (msg) => {
-    if (msg == "val" || msg == "kusok") {
-      clearInterval(interval_img_guess);
-      pixel(0);
-      pixel_state = 0;
-      io.emit('message', "TROUVED !!!!")
-      setTimeout(() => {
-        interval_img_guess = setInterval(() => pixel(), 100)
-        io.emit('message', "");
-      }, 3000);
-    } else {
-      ws.emit('message', "Pas trouved")
+    if (game_state) {
+      if (msg == "val" || msg == "kusok") {
+        game_state = 0;
+        clearInterval(interval_img_guess);
+        pixel(0);
+        pixel_state = 0;
+        io.emit('message', "TROUVED !!!!")
+        setTimeout(() => {
+          interval_img_guess = setInterval(() => pixel(), 100)
+          io.emit('message', "");
+          game_state = 1
+        }, 3000);
+      } else {
+        ws.emit('message', "Pas trouved")
+      }
     }
   })
 });
