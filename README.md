@@ -1,6 +1,6 @@
 # GuessWut
 
-* Remake de **GuessWhat** par développé **sparklinlabs**.
+* Remake de **GuessWhat** développé par **sparklinlabs**.
 * Jouable ici : http://www.arthurdev.fr/
 
 <p align="center">
