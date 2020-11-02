@@ -19,7 +19,7 @@ $(function () {
         if (socket_rdy) {
             $("#username_form, #alert_msg").remove();
             $("#guess_form, #main, #highscore").show();
-            $("#forms").css("bottom", "5%");
+            $("#forms").css("bottom", "2.5%");
             $('#scoreboard')
         }
     });
