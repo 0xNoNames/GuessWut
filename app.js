@@ -9,7 +9,7 @@ const io = require('socket.io')(server);
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse café', 'svastika', 'porot1', 'jerry', 'sylvain durif', 'skyyart', 'alain soral', 'chien2', 'poule', 'chien3', 'hitler', 'marine le pen', 'chien4', 'chien5', 'laink1', 'rammus', 'fien', 'braum', 'chat2', 'porot2', 'porot3', 'porot4', 'porot5', 'nathan', 'chauve-souris', 'arthur1', '^^', 'chat3', 'sardoche', 'wartek', 'shrek', 'porot6', 'porot7', 'gateau', 'chat4', 'nathan1', 't-rex', 'sardoche1']
+var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse café', 'svastika', 'dodo', 'jerry', 'sylvain durif', 'skyyart', 'alain soral', 'chien2', 'poule', 'chien3', 'hitler', 'marine le pen', 'chien4', 'chien5', 'laink1', 'rammus', 'fien', 'braum', 'chat2', 'porot2', 'porot3', 'porot4', 'porot5', 'nathan', 'chauve-souris', 'arthur1', '^^', 'chat3', 'sardoche', 'wartek', 'shrek', 'porot6', 'porot7', 'gateau', 'chat4', 'nathan1', 't-rex', 'sardoche1']
 var copy_array = imgs_array.slice();
 
 var random_nb = getRandomInt(imgs_array.length - 1);
@@ -48,7 +48,7 @@ function restartGame(ws, trouved = 1) {
     img_name = copy_array[random_nb];
     copy_array.splice(random_nb, 1);
   } else {
-    io.emit('message', "vous êtes naze, c'était " + img_name.replace(/\d+$/, "") + " :/");
+    io.emit('message', "vous êtes nazes, c'était " + img_name.replace(/\d+$/, "") + " :/");
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
   }

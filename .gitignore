@@ -350,6 +350,3 @@ MigrationBackup/
 .ionide/
 .vscode/settings.json
 dist/app.dev.js
-*.jpg
-*.ico
-*.png
