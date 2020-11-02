@@ -62,6 +62,10 @@ body {
     font-size: 35px;
 }
 
+#message {
+    margin-top: 2.5vh;
+}
+
 #main {
     text-align: center;
     font-size: 25px;

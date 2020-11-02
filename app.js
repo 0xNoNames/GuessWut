@@ -10,7 +10,7 @@ const io = require('socket.io')(server);
 const userSocketIdMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink', 'boa', 'chat', 'caisse cafe']
+var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink', 'boa', 'chat', 'caisse cafe', 'svastika']
 var img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
 
 
