@@ -10,10 +10,11 @@ body {
     font: 10px arial;
 }
 
-#reponse {
+#forms {
     position: absolute;
-    bottom: 0;
+    bottom: 50%;
 }
+
 
 #main {
     text-align: center;

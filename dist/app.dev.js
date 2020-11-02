@@ -2,6 +2,8 @@
 
 var Jimp = require('jimp');
 
+var fs = require('fs');
+
 var express = require('express');
 
 var app = express();
@@ -10,9 +12,11 @@ var server = require('http').createServer(app);
 
 var io = require('socket.io')(server);
 
-var clientarray = {};
+var userSocketIdMap = new Map();
 var pixel_state = 0;
-var game_state = 1; ////////////////////////////////
+var game_state = 1;
+var img_name = "val";
+var imgs_array = ['siphano', 'chien', 'cheval', 'val']; ////////////////////////////////
 
 app.use(express["static"](__dirname + '/public'));
 app.get('/', function (req, res) {
@@ -20,11 +24,13 @@ app.get('/', function (req, res) {
 });
 server.listen(process.env.PORT || 3000); //////////////////////////////////
 
-function getRandomIntInclusive(min, max) {
+function getRandomInt(min, max) {
   return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min);
 }
 
-;
+; ///////////////////////////
+// var text = fs.readFileSync(__dirname + '/public/dictionnaire.txt','utf8')
+// console.log (text[0])
 
 function pixel() {
   var bool = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
@@ -76,17 +82,30 @@ var interval_img_guess = setInterval(function () {
   pixel();
 }, 100);
 io.on('connection', function (ws) {
-  ws.on('username', function (msg) {
-    clientarray.append(msg);
+  ws.on('disconnect', function () {
+    if (userSocketIdMap.has(ws.username)) {
+      userSocketIdMap["delete"](ws.username);
+    } //io.sockets.emit('update', users);
+
+  });
+  ws.on('username', function (username) {
+    if (!userSocketIdMap.has(username)) {
+      userSocketIdMap.set(username, ws.id); //new Set([socketId]));
+
+      ws.username = username;
+      ws.emit('ready', "1");
+    } else {
+      ws.emit('message', "Utilisateur déjà connecté");
+    }
   });
   ws.on('guess', function (msg) {
     if (game_state) {
-      if (msg == "val" || msg == "kusok") {
+      if (msg == img_name) {
         game_state = 0;
         clearInterval(interval_img_guess);
         pixel(0);
         pixel_state = 0;
-        io.emit('message', "TROUVED !!!!");
+        io.emit('message', ws.username + " à TROUVED !!!!");
         setTimeout(function () {
           interval_img_guess = setInterval(function () {
             return pixel();

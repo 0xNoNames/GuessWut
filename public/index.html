@@ -13,30 +13,55 @@
 
 <body>
     <div id="main">
-        <div id="image"></div>        
+        <div id="image" style="display: none;"></div>
         <div id="message"></div>
     </div>
-    <div id="reponse">
-        <form action="">
-            <input id="guess" autocomplete="off" /><button>GUESS</button>
+    <div id="forms">
+
+        <form id="username_form" action="">
+            <input id="username_input" autocomplete="off" /><button>USERNAME</button>
         </form>
+
+        <form id="guess_form" action="" style="display: none;">
+            <input id="guess_input" autocomplete="off" /><button>GUESS</button>
+        </form>
+
     </div>
     <script>
         $(function () {
             var socket = io();
+
             socket.on('message', (socket_msg) => {
                 $('#message').html(socket_msg);
             });
+
             socket.on('image', (socket_img) => {
                 var image = new Image();
                 image.src = 'data:image/png;base64,' + socket_img;
                 $("#image").html(image);
             })
-            $('form').submit(function (e) {
-                e.preventDefault(); 
-                socket.emit('guess', $('#guess').val());
-                $('#guess').val('');
-                return false;
+
+            socket.on('ready', (socket_rdy) => {
+                console.log(socket_rdy)
+                if (socket_rdy){
+                    $("#username_form").remove();
+                    $("#guess_form, #image").show();
+                    $("#forms").css("bottom", "0");
+                }
+            })
+
+            $("#username_form").submit(function (e) {
+                console.log($('#username_input').val())
+                e.preventDefault();
+                if ($('#username_input').val() != '') {
+                    socket.emit('username', $('#username_input').val());
+                }
+            });
+
+            $("#guess_form").submit(function (e) {
+                e.preventDefault();
+                socket.emit('guess', $('#guess_input').val());
+                $('#guess_input').val('');
             });
         });
     </script>
