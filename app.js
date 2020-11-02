@@ -1,5 +1,7 @@
-var Jimp = require('jimp');
-const fs = require('fs');
+const {
+  createCanvas,
+  loadImage
+} = require('canvas');
 
 const express = require('express');
 const app = express();
@@ -25,7 +27,7 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-server.listen(process.env.PORT);
+server.listen(process.env.PORT || 3000);
 
 
 //////////////////////////////////
@@ -56,49 +58,51 @@ function restartGame(ws, trouved = 1) {
   if (copy_array.length == 0) copy_array = imgs_array.slice();
 
   setTimeout(() => {
-    interval_img_guess = setInterval(() => pixel(), 100)
+    interval_img_guess = setInterval(() => pixel(), 150)
     io.emit('message', "");
     game_state = 1;
   }, 3000);
+}
+
+function pixelate(image, ctx, canvas, value) {
+  var size = value / 100,
+    w = Math.round(canvas.width * size),
+    h = Math.round(canvas.height * size);
+
+  ctx.drawImage(image, 0, 0, w, h);
+
+  ctx.msImageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.imageSmoothingEnabled = false;
+
+  ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height)
 }
 
 
 ///////////////////////////
 
 
-// var text = fs.readFileSync(__dirname + '/public/dictionnaire.txt','utf8')
-// console.log (text[0])
-
 function pixel(bool = 1) {
   if (bool) {
-    if (pixel_state > 85 && pixel_state < 100) {
-      Jimp.read(__dirname + '/public/images/' + img_name + '.jpg').then(image => {
-        pixel_state += 0.25;
-        var pix = image.bitmap.width / 85;
-        image.pixelate(parseFloat(pix.toFixed(2))).getBuffer(image.getMIME(), (err, buf) => {
-          var msg = buf.toString('base64');
-          io.emit('image', msg);
-        });
-      });
-    } else if (pixel_state > 100) {
+    if (pixel_state > 60) {
       restartGame("", false);
     } else {
-      Jimp.read(__dirname + '/public/images/' + img_name + '.jpg').then(image => {
+      loadImage(__dirname + '/public/images/' + img_name + '.jpg').then((image) => {
         pixel_state += 0.25;
-        var pix = image.bitmap.width / pixel_state;
-        image.pixelate(parseFloat(pix.toFixed(2))).getBuffer(image.getMIME(), (err, buf) => {
-          var msg = buf.toString('base64');
-          io.emit('image', msg);
-        });
-      });
+        var canvas = createCanvas(image.width, image.height);
+        var ctx = canvas.getContext('2d');
+        pixelate(image, ctx, canvas, pixel_state);
+        io.emit('image', canvas.toDataURL());
+      })
     }
-  } else {
-    Jimp.read(__dirname + '/public/images/' + img_name + '.jpg').then(image => {
-      image.getBuffer(image.getMIME(), (err, buf) => {
-        var msg = buf.toString('base64');
-        io.emit('image', msg);
-      });
-    });
+  } else { // Image sans pixelisation
+    loadImage(__dirname + '/public/images/' + img_name + '.jpg').then((image) => {
+      var canvas = createCanvas(image.width, image.height);
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      io.emit('image', canvas.toDataURL());
+    })
   }
 };
 
@@ -108,9 +112,11 @@ function pixel(bool = 1) {
 
 var interval_img_guess = setInterval(() => {
   pixel();
-}, 100);
+}, 150);
 
 io.on('connection', (ws) => {
+
+  ws.emit('update', JSON.stringify(Array.from(userPointsMap)));
 
   ws.on('disconnect', function () {
     if (userPointsMap.has(ws.username)) userPointsMap.delete(ws.username);

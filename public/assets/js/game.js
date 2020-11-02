@@ -11,7 +11,8 @@ $(function () {
 
     socket.on('image', (socket_img) => {
         var image = new Image($("body").height() / 1.3, $("body").height() / 1.3);
-        image.src = 'data:image/png;base64,' + socket_img;
+        console.log(socket_img)
+        image.src = socket_img;
         $("#image").html(image);
     });
 
