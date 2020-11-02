@@ -1,16 +1,10 @@
-npm install express
+﻿npm install express
 npm install socket.io
 npm install jimp
 
 
 !! r�cuperer image sur internet + son nom -> save l'image puis la delete lorsque trouv� !!
 !! faire un dictionnaire (dans bdd) !!
-!! tester si le mot == image !!
-
-!! page pour choisir l'identifiant si celui-ci est pas d�j� co !!
-
-!! trouved by : "user" <br> ct "name" !!
-
-!! gens connected !!
-
-!! leaderboard !!
+!! modifier css !!
+!! organiser les navs selon les points !! 
+!! enlever ports !!

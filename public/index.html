@@ -60,10 +60,12 @@
             });
 
             socket.on('update', (socket_msg) => {
-                var userPointsArray = new Array(JSON.parse(socket_msg));
+                var userPointsArray = JSON.parse(socket_msg);
+                userPointsArray.sort(function(a,b){return b[1] - a[1];});
                 $('#navscores').html('');
-                for (let i = 0; i < userPointsArray[0].length; i++) {
-                    $('#navscores').append('<ul><span>' + userPointsArray[0][i][0] + '</span><span>' + userPointsArray[0][i][1] + '</span></ul>');
+                for (let i = 0; i < userPointsArray.length; i++) {
+                    $('#navscores').append('<ul><span>' + userPointsArray[i][0] + '</span><span>' +
+                        userPointsArray[i][1] + '</span></ul>');
                 }
                 $('#scoreboard').show()
             });
