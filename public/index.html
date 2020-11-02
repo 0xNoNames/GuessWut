@@ -16,6 +16,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body>
+    <div id="highscore" style="display: none;"></div>
     <div id="main" style="display: none;">
         <div id="image"></div>
         <div id="message"></div>
@@ -42,7 +43,7 @@
             });
 
             socket.on('image', (socket_img) => {
-                var image = new Image(600,600);
+                var image = new Image($("body").height()/1.3, $("body").height()/1.3);
                 image.src = 'data:image/png;base64,' + socket_img;
                 $("#image").html(image);
             });

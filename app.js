@@ -10,8 +10,8 @@ const io = require('socket.io')(server);
 const userSocketIdMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'cheval', 'val']
-var img_name = imgs_array[getRandomInt(0, imgs_array.length-1)];
+var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink']
+var img_name = imgs_array[getRandomInt(0, imgs_array.length - 1)];
 
 
 ////////////////////////////////
@@ -34,12 +34,12 @@ function getRandomInt(min, max) {
 
 function restartGame(ws, trouved = 1) {
   clearInterval(interval_img_guess);
-  game_state,
+  game_state = 0;
   pixel_state = 0;
   pixel(0);
   if (trouved) io.emit('message', ws.username + " à TROUVED !!!!" + " ct " + img_name)
   else io.emit('message', "vous êtes naze, c'était " + img_name + " :/")
-  img_name = imgs_array[getRandomInt(0, imgs_array.length)];
+  img_name = imgs_array[getRandomInt(0, imgs_array.length - 1)];
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 100)
     io.emit('message', "");
@@ -65,12 +65,11 @@ function pixel(bool = 1) {
         });
       });
     } else if (pixel_state > 100) {
-      restartGame("",false)
+      restartGame("", false)
     } else {
       Jimp.read(__dirname + '/public/images/' + img_name + '.jpg').then(image => {
         pixel_state += 0.25;
         var pix = image.bitmap.width / pixel_state;
-        console.log(pix)
         image.pixelate(parseFloat(pix.toFixed(2))).getBuffer(image.getMIME(), (err, buf) => {
           var msg = buf.toString('base64');
           io.emit('image', msg);
