@@ -106,8 +106,8 @@ io.on('connection', (ws) => {
 
   ws.on('username', (username) => {
     if (!userPointsMap.has(username)) {
-      ws.username = username
-      ws.point = 0
+      ws.username = username;
+      ws.point = 0;
       userPointsMap.set(username, ws.point);
       ws.emit('ready', "1");
       io.emit('update', JSON.stringify(Array.from(userPointsMap)));
