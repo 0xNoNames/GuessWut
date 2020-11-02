@@ -1,3 +1,11 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    white-space: nowrap
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -8,16 +16,54 @@ body {
     justify-content: center;
     align-items: center;
     font: 10px arial;
+    background: linear-gradient(-45deg, hsl(0, 72%, 49%), hsl(90, 72%, 49%), hsl(135, 72%, 49%), hsl(225, 72%, 49%), hsl(315, 72%, 49%));
+    background-size: 600% 600%;
+    -webkit-animation: gradient 100s linear infinite;
+    animation: gradient 100s linear infinite;
+}
+
+@-webkit-keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 #forms {
     position: absolute;
     bottom: 50%;
+    text-align: center;
 }
 
+#alert_msg {
+    margin-top: 25px;
+    color: red;
+    font-size: 35px;
+}
 
 #main {
     text-align: center;
     font-size: 25px;
-    color : white;
+    color: white;
 }

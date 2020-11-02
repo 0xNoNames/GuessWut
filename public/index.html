@@ -12,24 +12,26 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body>
-    <div id="main">
-        <div id="image" style="display: none;"></div>
+    <div id="main" style="display: none;">
+        <div id="image"></div>
         <div id="message"></div>
     </div>
     <div id="forms">
-
         <form id="username_form" action="">
             <input id="username_input" autocomplete="off" /><button>USERNAME</button>
         </form>
-
         <form id="guess_form" action="" style="display: none;">
             <input id="guess_input" autocomplete="off" /><button>GUESS</button>
         </form>
-
+        <div id="alert_msg"></div>
     </div>
     <script>
         $(function () {
             var socket = io();
+
+            socket.on('alert_msg', (socket_msg) => {
+                $('#alert_msg').html(socket_msg);
+            });
 
             socket.on('message', (socket_msg) => {
                 $('#message').html(socket_msg);
@@ -39,19 +41,17 @@
                 var image = new Image();
                 image.src = 'data:image/png;base64,' + socket_img;
                 $("#image").html(image);
-            })
+            });
 
             socket.on('ready', (socket_rdy) => {
-                console.log(socket_rdy)
-                if (socket_rdy){
-                    $("#username_form").remove();
-                    $("#guess_form, #image").show();
-                    $("#forms").css("bottom", "0");
+                if (socket_rdy) {
+                    $("#username_form, #alert_msg").remove();
+                    $("#guess_form, #main").show();
+                    $("#forms").css("bottom", "10%");
                 }
-            })
+            });
 
             $("#username_form").submit(function (e) {
-                console.log($('#username_input').val())
                 e.preventDefault();
                 if ($('#username_input').val() != '') {
                     socket.emit('username', $('#username_input').val());

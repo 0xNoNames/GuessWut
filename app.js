@@ -59,7 +59,7 @@ function pixel(bool = 1) {
         io.emit('message', "");
       }, 3000);
     } else {
-      Jimp.read(__dirname + '/public/images/val.png').then(image => {
+      Jimp.read(__dirname + '/public/images/val.jpg').then(image => {
         pixel_state += 0.25;
         var pix = image.bitmap.width / pixel_state;
         image.pixelate(parseFloat(pix.toFixed(2))).getBuffer(image.getMIME(), (err, buf) => {
@@ -69,7 +69,7 @@ function pixel(bool = 1) {
       });
     }
   } else {
-    Jimp.read(__dirname + '/public/images/val.png').then(image => {
+    Jimp.read(__dirname + '/public/images/val.jpg').then(image => {
       image.getBuffer(image.getMIME(), (err, buf) => {
         var msg = buf.toString('base64');
         io.emit('image', msg);
@@ -101,7 +101,7 @@ io.on('connection', (ws) => {
       ws.username = username
       ws.emit('ready', "1");
     } else {
-      ws.emit('message', "Utilisateur déjà connecté");
+      ws.emit('alert_msg', "Utilisateur déjà connecté");
     }
   });
 
