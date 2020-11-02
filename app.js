@@ -10,8 +10,8 @@ const io = require('socket.io')(server);
 const userSocketIdMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink']
-var img_name = imgs_array[getRandomInt(0, imgs_array.length - 1)];
+var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink', 'boa', 'chat', 'caisse cafe']
+var img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
 
 
 ////////////////////////////////
@@ -28,9 +28,9 @@ server.listen(process.env.PORT || 3000)
 //////////////////////////////////
 
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min);
-};
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 function restartGame(ws, trouved = 1) {
   clearInterval(interval_img_guess);
@@ -39,7 +39,7 @@ function restartGame(ws, trouved = 1) {
   pixel(0);
   if (trouved) io.emit('message', ws.username + " à TROUVED !!!!" + " ct " + img_name)
   else io.emit('message', "vous êtes naze, c'était " + img_name + " :/")
-  img_name = imgs_array[getRandomInt(0, imgs_array.length - 1)];
+  img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 100)
     io.emit('message', "");
