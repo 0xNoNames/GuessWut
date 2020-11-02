@@ -4,6 +4,6 @@
 * Jouable ici : https://www.arthurdev.fr/
 
 <p align="center">
-  <img src="https://github.com/arthur-petre/GuessWut/blob/main/val.png">
+  <img src="https://www.arthurdev.fr/images/val.jpg">
 </p>
 
