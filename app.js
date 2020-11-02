@@ -1,7 +1,6 @@
 var Jimp = require('jimp');
 const fs = require('fs');
 
-
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -10,7 +9,7 @@ const io = require('socket.io')(server);
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse cafe', 'svastika']
+var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse café', 'svastika', 'porot1', 'jerry','sylvain durif', 'skyyart', 'alain soral', 'chien2','poule','chien3','hitler','marine le pen', 'chien4','chien5','laink1','rammus','fien','braum','chat2','porot2','porot3','porot4','porot5','nathan','chauve-souris','arthur1','^^','chat3','sardoche','wartek','shrek','porot6','porot7','gateau','chat4','nathan1','t-rex','sardoche1']
 var img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
 
 
@@ -22,14 +21,14 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-server.listen(process.env.PORT || 3000)
+server.listen(process.env.PORT)
 
 
 //////////////////////////////////
 
 
 function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+  return Math.floor(Math.random() * max);
 }
 
 function restartGame(ws, trouved = 1) {
