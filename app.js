@@ -1,8 +1,10 @@
-const {
+﻿const {
   createCanvas,
   loadImage
 } = require('canvas');
 
+
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -11,7 +13,12 @@ const io = require('socket.io')(server);
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse café', 'svastika', 'dodo', 'jerry', 'sylvain durif', 'skyyart', 'alain soral', 'chien2', 'poule', 'chien3', 'hitler', 'marine le pen', 'chien4', 'chien5', 'laink1', 'rammus', 'fien', 'braum', 'chat2', 'porot2', 'porot3', 'porot4', 'porot5', 'nathan', 'chauve-souris', 'arthur1', '^^', 'chat3', 'sardoche', 'wartek', 'shrek', 'porot6', 'porot7', 'gateau', 'chat4', 'nathan1', 't-rex', 'sardoche1']
+
+const imgs_array = fs.readdirSync(__dirname +'/public/images/');
+imgs_array.forEach(function(part, index) {
+  this[index] = this[index].slice(0, -4);
+}, imgs_array); 
+
 var copy_array = imgs_array.slice();
 
 var random_nb = getRandomInt(imgs_array.length - 1);
