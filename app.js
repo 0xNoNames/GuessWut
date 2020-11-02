@@ -41,7 +41,7 @@ function restartGame(ws, trouved = 1) {
   else io.emit('message', "vous êtes naze, c'était " + img_name + " :/")
   img_name = imgs_array[getRandomInt(0, imgs_array.length)];
   setTimeout(() => {
-    interval_img_guess = setInterval(() => pixel(), 250)
+    interval_img_guess = setInterval(() => pixel(), 100)
     io.emit('message', "");
     game_state = 1
   }, 3000);
@@ -93,7 +93,7 @@ function pixel(bool = 1) {
 
 var interval_img_guess = setInterval(() => {
   pixel();
-}, 250)
+}, 100)
 
 io.on('connection', (ws) => {
 
