@@ -14,7 +14,7 @@ body {
     justify-content: center;
     align-items: center;
     font: 10px arial;
-    background: linear-gradient(-45deg, hsl(0, 72%, 49%), hsl(90, 72%, 49%), hsl(135, 72%, 49%), hsl(225, 72%, 49%), hsl(315, 72%, 49%));
+    background: linear-gradient(-45deg, hsl(0, 72%, 49%), hsl(135, 72%, 49%), hsl(225, 72%, 49%), hsl(315, 72%, 49%));
     background-size: 600% 600%;
     -webkit-animation: gradient 100s linear infinite;
     animation: gradient 100s linear infinite;
