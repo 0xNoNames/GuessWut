@@ -7,8 +7,6 @@
 }
 
 body {
-    margin: 0;
-    padding: 0;
     background-color: grey;
     height: 100vh;
     width: 100wh;
@@ -72,6 +70,49 @@ body {
     color: white;
 }
 
-#image {
-    box-shadow : 0 0 10px 5px rgba(0, 0, 0, 0.5);
+#image img {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
+}
+
+#scoreboard {
+    display: none;
+    text-align: center;
+    position: absolute;
+    left: 10%;
+    color: white;
+    margin-right: auto;
+    font-size: 200%;
+    height: 30vh;
+}
+
+#navscores {
+    width: 20vh;
+    overflow: auto;
+}
+
+#navscores ul {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+}
+
+#navscores span:last-child {
+    margin-left: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.3);
+    border: solid 3px transparent;
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: white;
+    border-radius: 5px;
 }

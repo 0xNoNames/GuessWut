@@ -7,10 +7,10 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-const userSocketIdMap = new Map();
+const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'doggo', 'laink', 'boa', 'chat', 'caisse cafe', 'svastika']
+var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse cafe', 'svastika']
 var img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
 
 
@@ -37,8 +37,11 @@ function restartGame(ws, trouved = 1) {
   game_state = 0;
   pixel_state = 0;
   pixel(0);
-  if (trouved) io.emit('message', ws.username + " à TROUVED !!!!" + " ct " + img_name)
-  else io.emit('message', "vous êtes naze, c'était " + img_name + " :/")
+  if (trouved) {
+    io.emit('message', ws.username + " à TROUVED !!!!" + " ct " + img_name.replace(/\d+$/, ""))
+    userPointsMap.set(ws.username, ++ws.point);
+    io.emit('update', JSON.stringify(Array.from(userPointsMap)));
+  } else io.emit('message', "vous êtes naze, c'était " + img_name.replace(/\d+$/, "") + " :/")
   img_name = imgs_array[getRandomInt(imgs_array.length - 1)];
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 100)
@@ -47,11 +50,12 @@ function restartGame(ws, trouved = 1) {
   }, 3000);
 }
 
+
 ///////////////////////////
+
 
 // var text = fs.readFileSync(__dirname + '/public/dictionnaire.txt','utf8')
 // console.log (text[0])
-
 
 function pixel(bool = 1) {
   if (bool) {
@@ -97,21 +101,23 @@ var interval_img_guess = setInterval(() => {
 io.on('connection', (ws) => {
 
   ws.on('disconnect', function () {
-    if (userSocketIdMap.has(ws.username)) userSocketIdMap.delete(ws.username);
-    //io.sockets.emit('update', users);
+    if (userPointsMap.has(ws.username)) userPointsMap.delete(ws.username);
+    ws.broadcast.emit('update', JSON.stringify(Array.from(userPointsMap)));
   });
 
   ws.on('username', (username) => {
-    if (!userSocketIdMap.has(username)) {
-      userSocketIdMap.set(username, ws.id); //new Set([socketId]));
+    if (!userPointsMap.has(username)) {
       ws.username = username
+      ws.point = 0
+      userPointsMap.set(username, ws.point);
       ws.emit('ready', "1");
+      io.emit('update', JSON.stringify(Array.from(userPointsMap)));
     } else ws.emit('alert_msg', "Utilisateur déjà connecté");
   });
 
   ws.on('guess', (msg) => {
     if (game_state) {
-      if (msg == img_name) restartGame(ws)
+      if (msg == img_name.replace(/\d+$/, "")) restartGame(ws)
       else ws.emit('message', "Pas trouved")
     }
   })
