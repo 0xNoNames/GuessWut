@@ -14,7 +14,7 @@ var copy_array = imgs_array.slice();
 
 var random_nb = getRandomInt(imgs_array.length - 1);
 var img_name = copy_array[random_nb];
-copy_array.splice(copy_array.indexOf(random_nb));
+copy_array.splice(random_nb, 1);
 
 
 ////////////////////////////////
@@ -46,20 +46,18 @@ function restartGame(ws, trouved = 1) {
     io.emit('update', JSON.stringify(Array.from(userPointsMap)));
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
-    copy_array.splice(random_nb);
+    copy_array.splice(random_nb, 1);
   } else {
     io.emit('message', "vous êtes naze, c'était " + img_name.replace(/\d+$/, "") + " :/");
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
   }
 
-  if (copy_array.length == 0) {
-    copy_array = imgs_array.slice();
-  }
+  if (copy_array.length == 0) copy_array = imgs_array.slice();
 
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 100)
-    io.emit('message', '');
+    io.emit('message', "");
     game_state = 1;
   }, 3000);
 }
