@@ -20,11 +20,11 @@ app.use(helmet());
 
 app.use(express.static(__dirname + '/public'));
 
-app.all('/add', function (req, res) {
-  res.redirect('/add.html');
-});
+// app.all('/add', function (req, res) {
+//   res.redirect('/add.html');
+// });
 
-app.all('/', function (req, res) {
+app.all('*', function (req, res) {
   res.redirect('/');
 });
 
@@ -145,12 +145,15 @@ io.on('connection', (ws) => {
 
   ws.on('username', (username) => {
     if (!userPointsMap.has(username)) {
-      ws.username = username;
-      ws.point = 0;
-      userPointsMap.set(username, ws.point);
-      ws.emit('ready', "1");
-      io.emit('update', JSON.stringify(Array.from(userPointsMap)));
-    } else ws.emit('alert_msg', "Utilisateur déjà connecté");
+      if (username.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
+      else {
+        ws.username = username;
+        ws.point = 0;
+        userPointsMap.set(username, ws.point);
+        ws.emit('ready', "1");
+        io.emit('update', JSON.stringify(Array.from(userPointsMap)));
+      }
+    } else ws.emit('alert_msg', "Utilisateur déjà connecté.");
   });
 
   ws.on('guess', (msg) => {

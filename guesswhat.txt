@@ -1,3 +1,7 @@
 ﻿!! upload de fichier dans /add !!
-!! div de guess !!
-!! pas un nom trop long !!
+!! pas un username trop long !!
+!! enlever les espaces et enelver les majs !!
+!! chat + timer dans le chat !!
+!! gerer les nombres dans les noms de fichiers !!
+!! régler le pixelate !!
+!! modifier css flex -> absolute !!
