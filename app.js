@@ -3,7 +3,7 @@
   loadImage
 } = require('canvas');
 
-
+var helmet = require('helmet');
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -28,6 +28,8 @@ copy_array.splice(random_nb, 1);
 
 ////////////////////////////////
 
+
+app.use(helmet());
 
 app.use(express.static(__dirname + '/public'));
 
