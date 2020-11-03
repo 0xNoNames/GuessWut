@@ -1,4 +1,6 @@
-﻿const {
+﻿"use strict";
+
+const {
   createCanvas,
   loadImage
 } = require('canvas');
@@ -152,10 +154,12 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
-    io.emit('chat', ws.username + ' : msg');
-    if (game_state) {
-      if (msg == img_name.replace(/\d+$/, "")) restartGame(ws);
-      else ws.emit('message', "Pas trouved");
+    if (userPointsMap.has(ws.username)) {
+      io.emit('chat', ws.username + ' : ' + msg);
+      if (game_state) {
+        if (msg == img_name.replace(/\d+$/, "")) restartGame(ws);
+        else ws.emit('message', "Pas trouved");
+      }
     }
   });
 });
