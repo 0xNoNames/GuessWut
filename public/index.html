@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
     <title>GuessWut</title>
-    <link rel="icon" type="image/png" sizes="256x256" href="/assets/favicon/favicon-256x256.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/assets/img/favicon/favicon-256x256.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
     <meta name="theme-color" content="#ffffff">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link title="style" rel="stylesheet" href="/assets/css/style.css">
+    <link title="style" rel="stylesheet" href="/assets/css/style.min.css">
 </head>
-<script src="/socket.io/socket.io.js"></script>
+
 <body>
     <div id="scoreboard" style="display: none;">
         <nav id="navscores"></nav>
@@ -22,13 +22,20 @@
     </div>
     <div id="forms">
         <form id="username_form" action="">
-            <input id="username_input" autocomplete="off" placeholder="Entrez un pseudo..."/><!--<button>ENTRER</button> -->
+            <input id="username_input" autocomplete="off" placeholder="Entrez un pseudo..." />
+            <!--<button>ENTRER</button> -->
         </form>
         <form id="guess_form" action="" style="display: none;">
-            <input id="guess_input" autocomplete="off" placeholder="Essayez un mot..."/><!--<button>GUESS</button>-->
+            <input id="guess_input" autocomplete="off" placeholder="Essayez un mot..." />
+            <!--<button>GUESS</button>-->
         </form>
         <div id="alert_msg"></div>
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/game.min.js"></script>
 </body>
-<script src="/assets/js/game.js"></script>
+
+
 </html>

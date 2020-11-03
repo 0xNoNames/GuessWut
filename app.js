@@ -10,11 +10,33 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+
+////////////////////////////////
+
+
+app.use(helmet());
+
+app.use(express.static(__dirname + '/public'));
+
+app.all('/add', function (req, res) {
+  res.redirect('/add.html');
+});
+
+app.all('/', function (req, res) {
+  res.redirect('/');
+});
+
+server.listen(80);
+
+
+//////////////////////////////////
+
+
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
 
-const imgs_array = fs.readdirSync(__dirname + '/public/images/');
+const imgs_array = fs.readdirSync(__dirname + '/public/assets/img/jpg/');
 imgs_array.forEach(function (part, index) {
   this[index] = this[index].slice(0, -4);
 }, imgs_array);
@@ -24,25 +46,6 @@ var copy_array = imgs_array.slice();
 var random_nb = getRandomInt(imgs_array.length - 1);
 var img_name = copy_array[random_nb];
 copy_array.splice(random_nb, 1);
-
-
-////////////////////////////////
-
-
-app.use(helmet());
-
-app.use(express.static(__dirname + '/public'));
-
-
-app.all('/add', function(req, res) {
-  res.redirect('/add.html'); 
-});
-
-app.all('*', function(req, res) { 
-  res.redirect('/index.html'); 
-});
-
-server.listen(3000);
 
 
 //////////////////////////////////
@@ -103,7 +106,7 @@ function pixel(bool = 1) {
     if (pixel_state > 24) {
       restartGame("", false);
     } else {
-      loadImage(__dirname + '/public/images/' + img_name + '.jpg').then((image) => {
+      loadImage(__dirname + '/public/assets/img/jpg/' + img_name + '.jpg').then((image) => {
         pixel_state += 0.1;
         var canvas = createCanvas(image.width, image.height);
         var ctx = canvas.getContext('2d');
@@ -112,7 +115,7 @@ function pixel(bool = 1) {
       })
     }
   } else { // Image sans pixelisation
-    loadImage(__dirname + '/public/images/' + img_name + '.jpg').then((image) => {
+    loadImage(__dirname + '/public/assets/img/jpg/' + img_name + '.jpg').then((image) => {
       var canvas = createCanvas(image.width, image.height);
       var ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0);
@@ -149,6 +152,7 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
+    io.emit('chat', ws.username + ' : msg');
     if (game_state) {
       if (msg == img_name.replace(/\d+$/, "")) restartGame(ws);
       else ws.emit('message', "Pas trouved");

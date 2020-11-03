@@ -1,10 +1,3 @@
-﻿npm install express
-npm install socket.io
-npm install jimp
-
-
-!! r�cuperer image sur internet + son nom -> save l'image puis la delete lorsque trouv� !!
-!! faire un dictionnaire (dans bdd) !!
-!! modifier css !!
-!! organiser les navs selon les points !! 
-!! enlever ports !!
+﻿!! upload de fichier dans /add !!
+!! div de guess !!
+!! pas un nom trop long !!
