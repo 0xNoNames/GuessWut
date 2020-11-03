@@ -1,8 +1,10 @@
-const {
+﻿const {
   createCanvas,
   loadImage
 } = require('canvas');
 
+
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -11,7 +13,12 @@ const io = require('socket.io')(server);
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
-var imgs_array = ['siphano', 'chien', 'chien1', 'cheval', 'val', 'arthur', 'merenathan.jpg', 'homer', 'nunu', 'porot', 'bowser', 'laink', 'boa', 'chat', 'chat1', 'caisse café', 'svastika', 'dodo', 'jerry', 'sylvain durif', 'skyyart', 'alain soral', 'chien2', 'poule', 'chien3', 'hitler', 'marine le pen', 'chien4', 'chien5', 'laink1', 'rammus', 'fien', 'braum', 'chat2', 'porot2', 'porot3', 'porot4', 'porot5', 'nathan', 'chauve-souris', 'arthur1', '^^', 'chat3', 'sardoche', 'wartek', 'shrek', 'porot6', 'porot7', 'gateau', 'chat4', 'nathan1', 't-rex', 'sardoche1']
+
+const imgs_array = fs.readdirSync(__dirname + '/public/images/');
+imgs_array.forEach(function (part, index) {
+  this[index] = this[index].slice(0, -4);
+}, imgs_array);
+
 var copy_array = imgs_array.slice();
 
 var random_nb = getRandomInt(imgs_array.length - 1);
@@ -23,11 +30,17 @@ copy_array.splice(random_nb, 1);
 
 
 app.use(express.static(__dirname + '/public'));
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/public/index.html');
+
+
+app.all('/add', function(req, res) {
+  res.redirect('/add.html'); 
 });
 
-server.listen(process.env.PORT || 3000);
+app.all('*', function(req, res) { 
+  res.redirect('/index.html'); 
+});
+
+server.listen(3000);
 
 
 //////////////////////////////////
@@ -58,7 +71,7 @@ function restartGame(ws, trouved = 1) {
   if (copy_array.length == 0) copy_array = imgs_array.slice();
 
   setTimeout(() => {
-    interval_img_guess = setInterval(() => pixel(), 150)
+    interval_img_guess = setInterval(() => pixel(), 125)
     io.emit('message', "");
     game_state = 1;
   }, 3000);
@@ -66,8 +79,8 @@ function restartGame(ws, trouved = 1) {
 
 function pixelate(image, ctx, canvas, value) {
   var size = value / 100,
-    w = Math.round(canvas.width * size),
-    h = Math.round(canvas.height * size);
+    w = canvas.width * size,
+    h = canvas.height * size;
 
   ctx.drawImage(image, 0, 0, w, h);
 
@@ -85,11 +98,11 @@ function pixelate(image, ctx, canvas, value) {
 
 function pixel(bool = 1) {
   if (bool) {
-    if (pixel_state > 60) {
+    if (pixel_state > 24) {
       restartGame("", false);
     } else {
       loadImage(__dirname + '/public/images/' + img_name + '.jpg').then((image) => {
-        pixel_state += 0.25;
+        pixel_state += 0.1;
         var canvas = createCanvas(image.width, image.height);
         var ctx = canvas.getContext('2d');
         pixelate(image, ctx, canvas, pixel_state);
@@ -112,7 +125,7 @@ function pixel(bool = 1) {
 
 var interval_img_guess = setInterval(() => {
   pixel();
-}, 150);
+}, 125);
 
 io.on('connection', (ws) => {
 
