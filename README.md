@@ -4,6 +4,6 @@
 * Jouable ici : https://www.arthurdev.fr/
 
 <p align="center">
-  <img src="https://www.arthurdev.fr/images/val.jpg">
+  <img src="https://www.arthurdev.fr/assets/favicon/favicon-256x256.png">
 </p>
 
