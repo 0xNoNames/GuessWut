@@ -1,6 +1,9 @@
-﻿!! chat + timer en ms dans le chat + mettre en vers celui qui trouve !!
+﻿!! chat + timer en ms dans le chat + mettre en vers celui qui trouve + rouge quand pas trouved + espaces !!
+
+!! couleur verte pour le message quand réussi !! 
 
 !! gerer les nombres dans les noms de fichiers !!
+( porot-1.jpg regex pour premier /*-[0-9]'.jpg'/)
 
 !! régler le pixelate !!
 
