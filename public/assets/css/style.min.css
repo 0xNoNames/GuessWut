@@ -101,10 +101,48 @@ button {
     margin: 0 auto 25px auto;
 }
 
-#uploadForm input:last-child {
-    margin: 25px auto 0 auto;
+#label-uploadFile {
+    cursor: pointer;
+    color: black;
+    text-align: center;
+    font-size: large;
+    padding: 50px 0 50px 0;
+    background-color: white;
+    border-radius: 15px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
+#label-uploadFile:hover {
+    color: white;
+    background-image: url("/assets/favicon/favicon-256x256.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+#input-uploadFile {
+    display: none;
+}
+
+#uploadButton {
+    cursor: pointer;
+    margin: 20px auto 0 auto;
+    background-color: #cd5b5b;
+}
+
+#backButton {
+    cursor: pointer;
+    position: absolute;
+    bottom: 15%;
+    background-color: rgb(70, 158, 180);
+    margin: 100px auto 0 auto;
+    border-radius: 10px;
+    border: none;
+}
 
 #scoreboard {
     display: none;

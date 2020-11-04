@@ -10,8 +10,10 @@
 
 !! ajout fleche de retour dans add !!
 
-!! size limit https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html !!
 !! reduire bruteforce https://libraries.io/npm/express-bouncer !!
+
+
+!! gerer minifier + resize les images !!
 
 
 

@@ -41,12 +41,12 @@ const upload = multer({
 
 app.post('/upload', (req, res) => {
   upload(req, res, async function (err) {
-    if (req.body.namefile === "") res.send("Mot manquant.");
-    else if (err || req.file === undefined) res.send("Pas de fichier ou fichier trop volumineux. (max 2MB)")
+    if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "msg": "Mot manquant."}'));
+    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg": "Pas de fichier ou fichier trop volumineux. (max 2MB)"}'));
     else if (req.file.mimetype != "image/jpeg") {
       fs.appendFile(__dirname + '/private/log.txt', "Extension non autorisée." + "\r\n", function (err) {});
-      res.send("Seulement des fichiers jpg ou jpeg.")
-    } else if (/\d/.test(req.body.namefile)) res.send("Pas de nombres dans le mot à deviner")
+      res.send(JSON.parse('{"success": false, "msg": "Seulement des fichiers jpg ou jpeg."}'));
+    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "msg":"Pas de nombres dans le mot à deviner"}'));
     else {
       let nums = []
       let namefile = req.body.namefile.replace(/\s/g, '')
@@ -67,7 +67,7 @@ app.post('/upload', (req, res) => {
 
       fs.writeFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg", req.file.buffer, (err) => {
         if (err) fs.appendFile(__dirname + '/private/log.txt', "jps" + "\r\n", function (err) {})
-        res.send("Fichier envoyé !")
+        res.send(JSON.parse('{"success": true, "msg": "Fichier envoyé !"}'));
         io.emit("newfile", "1");
         copy_array.push(namefile);
       });
