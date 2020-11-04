@@ -1,22 +1,19 @@
 ﻿"use strict";
 
-const {
-  createCanvas,
-  loadImage
-} = require('canvas');
-
-const hpp = require('hpp');
-const helmet = require('helmet');
-const fs = require('fs');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+
+const hpp = require('hpp');
+const helmet = require('helmet');
+const fs = require('fs');
 const multer = require('multer');
-const bodyParser = require('body-parser');
+const sharp = require('sharp');
 const {
-  nextTick
-} = require('process');
+  createCanvas,
+  loadImage
+} = require('canvas');
 
 
 ////////////////////////////////
@@ -34,7 +31,7 @@ app.get('/add', authentication, (req, res) => {
 
 const upload = multer({
   limits: {
-    fileSize: 4000000
+    fileSize: 10000000
   }
 }).single('file');
 
@@ -42,13 +39,13 @@ const upload = multer({
 app.post('/upload', (req, res) => {
   upload(req, res, async function (err) {
     if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "msg": "Mot manquant."}'));
-    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg": "Pas de fichier ou fichier trop volumineux. (max 2MB)"}'));
-    else if (req.file.mimetype != "image/jpeg") {
+    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
+    else if (req.file.mimetype != "image/jpeg" || eq.file.mimetype != "image/png") {
       fs.appendFile(__dirname + '/private/log.txt', "Extension non autorisée." + "\r\n", function (err) {});
-      res.send(JSON.parse('{"success": false, "msg": "Seulement des fichiers jpg ou jpeg."}'));
+      res.send(JSON.parse('{"success": false, "msg": "Seulement des fichiers jped et png."}'));
     } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "msg":"Pas de nombres dans le mot à deviner"}'));
     else {
-      let nums = []
+      let nums = [];
       let namefile = req.body.namefile.replace(/\s/g, '')
 
       for (let i = 0; i < copy_array.length; i++) {
@@ -65,13 +62,33 @@ app.post('/upload', (req, res) => {
       let indice = Math.max.apply(Math, nums) + 1;
       namefile = namefile + indice;
 
-      fs.writeFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg", req.file.buffer, (err) => {
-        if (err) fs.appendFile(__dirname + '/private/log.txt', "jps" + "\r\n", function (err) {})
-        fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
-        res.send(JSON.parse('{"success": true, "msg": "Fichier envoyé !"}'));
-        io.emit("newfile", "1");
-        copy_array.push(namefile);
-      });
+      let resize;
+
+      if (req.file.height > req.file.width) resize = {
+        heigh: 500,
+        withoutEnlargement: true
+      }
+      else resize = {
+        width: 500,
+        withoutEnlargement: true
+      }
+
+      sharp(req.file.buffer)
+        .resize(resize)
+        .toFormat('jpeg', {
+          progressive: true,
+          quality: 50
+        })
+        .toFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg")
+        .then(() => {
+          fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
+          res.send(JSON.parse('{"success": true, "msg": "Fichier envoyé !"}'));
+          io.emit("newfile", "1");
+          copy_array.push(namefile);
+        })
+        .catch((err) => {
+          fs.appendFile(__dirname + '/private/log.txt', err.fileName + "; " + err.message + "; " + err.lineNumber + "\r\n", function (err) {})
+        });
     }
   })
 })
@@ -209,7 +226,7 @@ io.on('connection', (ws) => {
   });
 
   ws.on('username', (username) => {
-    let encoded_msg = encodeURI(username).replace(/%20/g,"", '');
+    let encoded_msg = encodeURI(username).replace(/%20/g, "", '');
     if (!userPointsMap.has(encoded_msg)) {
       if (encoded_msg.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
       else {
@@ -223,9 +240,9 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
-    let encoded_msg = encodeURI(msg).toLowerCase().replace(/%20/g,"", '');
+    let encoded_msg = msg.toLowerCase().replace(/\s/g, "", '');
     if (userPointsMap.has(ws.username)) {
-      io.emit('chat', ws.username + ' : ' + encodeURI(encoded_msg));
+      io.emit('chat', ws.username + ' : ' + encoded_msg);
       if (game_state) {
         if (encoded_msg == img_name.replace(/\d+$/, "")) restartGame(ws);
         else ws.emit('message', "Pas trouved");
@@ -235,8 +252,6 @@ io.on('connection', (ws) => {
 });
 
 
-// process.on("uncaughtException", function(err) {
-//   // clean up allocated resources
-//   // log necessary error details to log files
-//   process.exit(); // exit the process to avoid unknown state
-// });
+process.on("uncaughtException", function (err) {
+  process.exit();
+});
