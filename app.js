@@ -40,8 +40,8 @@ app.post('/upload', (req, res) => {
   upload(req, res, async function (err) {
     if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "msg": "Mot manquant."}'));
     else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
-    else if (req.file.mimetype != "image/jpeg" || eq.file.mimetype != "image/png") {
-      fs.appendFile(__dirname + '/private/log.txt', "Extension non autorisée." + "\r\n", function (err) {});
+    else if (req.file.mimetype != "image/jpeg" && req.file.mimetype != "image/png") {
+      fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) {});
       res.send(JSON.parse('{"success": false, "msg": "Seulement des fichiers jped et png."}'));
     } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "msg":"Pas de nombres dans le mot à deviner"}'));
     else {
@@ -252,6 +252,6 @@ io.on('connection', (ws) => {
 });
 
 
-process.on("uncaughtException", function (err) {
-  process.exit();
-});
+// process.on("uncaughtException", function (err) {
+//   process.exit();
+// });
