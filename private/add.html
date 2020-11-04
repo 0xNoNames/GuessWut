@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>GuessUpload</title>
+    <link rel="icon" type="image/png" sizes="256x256" href="/assets/img/favicon/favicon-256x256.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <meta name="theme-color" content="#ffffff">
+    <link title="style" rel="stylesheet" href="/assets/css/style.min.css">
+</head>
+
+<body>
+    <form id="uploadForm">
+        <input type="text" name="namefile" autocomplete="off" placeholder="Mot à deviner" pattern="[a-zA-Z]*" required
+            autofocus /></div>
+        <input type="file" name="file" accept=".jpg, .jpeg" required /></div>
+        <input type="submit" value="Envoyer" id="uploadButton" />
+    </form>
+    <div id="alert_msg"></div>
+
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/upload.min.js"></script>
+
+
+</body>
+
+</html>

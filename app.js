@@ -5,12 +5,18 @@ const {
   loadImage
 } = require('canvas');
 
-var helmet = require('helmet');
+const hpp = require('hpp');
+const helmet = require('helmet');
 const fs = require('fs');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const multer = require('multer');
+const bodyParser = require('body-parser');
+const {
+  nextTick
+} = require('process');
 
 
 ////////////////////////////////
@@ -18,15 +24,57 @@ const io = require('socket.io')(server);
 
 app.use(helmet());
 
+app.use(hpp());
+
 app.use(express.static(__dirname + '/public'));
 
-// app.all('/add', function (req, res) {
-//   res.redirect('/add.html');
-// });
+app.get('/add', authentication, (req, res) => {
+  res.sendFile(__dirname + '/private/add.html')
+})
 
-app.all('*', function (req, res) {
-  res.redirect('/');
-});
+const upload = multer({
+  limits: {
+    fileSize: 4000000
+  }
+}).single('file');
+
+
+app.post('/upload', (req, res) => {
+  upload(req, res, async function (err) {
+    if (req.body.namefile === "") res.send("Mot manquant.");
+    else if (err || req.file === undefined) res.send("Pas de fichier ou fichier trop volumineux. (max 2MB)")
+    else if (req.file.mimetype != "image/jpeg") {
+      fs.appendFile(__dirname + '/private/log.txt', "Extension non autorisée." + "\r\n", function (err) {});
+      res.send("Seulement des fichiers jpg ou jpeg.")
+    } else if (/\d/.test(req.body.namefile)) res.send("Pas de nombres dans le mot à deviner")
+    else {
+      let nums = []
+      let namefile = req.body.namefile.replace(/\s/g, '')
+
+      for (let i = 0; i < copy_array.length; i++) {
+        if (namefile == copy_array[i].replace(/\d+$/, "")) {
+          nums.push(copy_array[i]);
+        }
+      }
+
+      for (let i = 0; i < nums.length; i++) {
+        nums[i] = nums[i].replace(namefile, '');
+      }
+
+      nums.push(0);
+      let indice = Math.max.apply(Math, nums) + 1;
+      namefile = namefile + indice;
+
+      fs.writeFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg", req.file.buffer, (err) => {
+        if (err) fs.appendFile(__dirname + '/private/log.txt', "jps" + "\r\n", function (err) {})
+        res.send("Fichier envoyé !")
+        io.emit("newfile", "1");
+        copy_array.push(namefile);
+      });
+    }
+  })
+})
+
 
 server.listen(80);
 
@@ -38,7 +86,7 @@ const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
 
-const imgs_array = fs.readdirSync(__dirname + '/public/assets/img/jpg/');
+var imgs_array = fs.readdirSync(__dirname + '/../guesswut-jpgs/');
 imgs_array.forEach(function (part, index) {
   this[index] = this[index].slice(0, -4);
 }, imgs_array);
@@ -53,6 +101,21 @@ copy_array.splice(random_nb, 1);
 //////////////////////////////////
 
 
+function authentication(req, res, next) {
+  const auth = {
+    login: 'groschien',
+    password: 'Bontoutou'
+  }
+
+  const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+  const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':')
+
+  if (login && password && password === auth.password) return next();
+
+  res.set('WWW-Authenticate', 'Basic realm="Access to upload files"')
+  res.status(401).send('Authentication required.')
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -63,14 +126,14 @@ function restartGame(ws, trouved = 1) {
   pixel_state = 0;
   pixel(0);
   if (trouved) {
-    io.emit('message', ws.username + " à TROUVED !!!!" + " ct " + img_name.replace(/\d+$/, ""));
+    io.emit('message', ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, ""));
     userPointsMap.set(ws.username, ++ws.point);
     io.emit('update', JSON.stringify(Array.from(userPointsMap)));
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
     copy_array.splice(random_nb, 1);
   } else {
-    io.emit('message', "vous êtes nazes, c'était " + img_name.replace(/\d+$/, "") + " :/");
+    io.emit('message', "C'était : " + img_name.replace(/\d+$/, "") + " :/");
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
   }
@@ -108,7 +171,7 @@ function pixel(bool = 1) {
     if (pixel_state > 24) {
       restartGame("", false);
     } else {
-      loadImage(__dirname + '/public/assets/img/jpg/' + img_name + '.jpg').then((image) => {
+      loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
         pixel_state += 0.1;
         var canvas = createCanvas(image.width, image.height);
         var ctx = canvas.getContext('2d');
@@ -117,7 +180,7 @@ function pixel(bool = 1) {
       })
     }
   } else { // Image sans pixelisation
-    loadImage(__dirname + '/public/assets/img/jpg/' + img_name + '.jpg').then((image) => {
+    loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
       var canvas = createCanvas(image.width, image.height);
       var ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0);
@@ -144,12 +207,13 @@ io.on('connection', (ws) => {
   });
 
   ws.on('username', (username) => {
-    if (!userPointsMap.has(username)) {
-      if (username.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
+    encoded_msg = encodeURI(username);
+    if (!userPointsMap.has(encoded_msg)) {
+      if (encoded_msg.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
       else {
-        ws.username = username;
+        ws.username = encoded_msg;
         ws.point = 0;
-        userPointsMap.set(username, ws.point);
+        userPointsMap.set(encoded_msg, ws.point);
         ws.emit('ready', "1");
         io.emit('update', JSON.stringify(Array.from(userPointsMap)));
       }
@@ -157,12 +221,20 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
+    encoded_msg = encodeURI(msg);
     if (userPointsMap.has(ws.username)) {
-      io.emit('chat', ws.username + ' : ' + msg);
+      io.emit('chat', ws.username + ' : ' + encodeURI(encoded_msg));
       if (game_state) {
-        if (msg == img_name.replace(/\d+$/, "")) restartGame(ws);
+        if (encoded_msg == img_name.replace(/\d+$/, "")) restartGame(ws);
         else ws.emit('message', "Pas trouved");
       }
     }
   });
 });
+
+
+// process.on("uncaughtException", function(err) {
+//   // clean up allocated resources
+//   // log necessary error details to log files
+//   process.exit(); // exit the process to avoid unknown state
+// });

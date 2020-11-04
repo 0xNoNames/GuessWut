@@ -91,6 +91,21 @@ button {
     box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
 }
 
+#uploadForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#uploadForm input:first-child {
+    margin: 0 auto 25px auto;
+}
+
+#uploadForm input:last-child {
+    margin: 25px auto 0 auto;
+}
+
+
 #scoreboard {
     display: none;
     text-align: center;
@@ -117,6 +132,7 @@ button {
 #navscores span:last-child {
     padding: 0 15px 0 10px;
 }
+
 
 ::-webkit-scrollbar {
     width: 10px;

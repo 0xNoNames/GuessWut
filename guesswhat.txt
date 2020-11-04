@@ -1,7 +1,19 @@
 ﻿!! upload de fichier dans /add !!
 !! pas un username trop long !!
 !! enlever les espaces et enelver les majs !!
-!! chat + timer dans le chat !!
+!! chat + timer en ms dans le chat + mettre en vers celui qui trouve !!
 !! gerer les nombres dans les noms de fichiers !!
 !! régler le pixelate !!
 !! modifier css flex -> absolute !!
+!! clear le guess input avant d'afficher l'image pour pas tricher !!
+!! faire focus direct dans l'input !!
+
+!! ajout fleche de retour dans add !!
+
+!! size limit https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html !!
+!! reduire bruteforce https://libraries.io/npm/express-bouncer !!
+
+
+
+
+!! pas oublier d'enlever les passwords et username d'authent avant github !!
