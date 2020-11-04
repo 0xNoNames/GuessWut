@@ -143,6 +143,7 @@ function restartGame(ws, trouved = 1) {
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 125)
     io.emit('message', "");
+    io.emit('restart');
     game_state = 1;
   }, 3000);
 }
@@ -207,7 +208,7 @@ io.on('connection', (ws) => {
   });
 
   ws.on('username', (username) => {
-    encoded_msg = encodeURI(username);
+    let encoded_msg = encodeURI(username).replace(/%20/g,"", '');
     if (!userPointsMap.has(encoded_msg)) {
       if (encoded_msg.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
       else {
@@ -221,7 +222,7 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
-    encoded_msg = encodeURI(msg);
+    let encoded_msg = encodeURI(msg).toLowerCase().replace(/%20/g,"", '');
     if (userPointsMap.has(ws.username)) {
       io.emit('chat', ws.username + ' : ' + encodeURI(encoded_msg));
       if (game_state) {

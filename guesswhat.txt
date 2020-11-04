@@ -1,20 +1,20 @@
-﻿!! upload de fichier dans /add !!
-!! pas un username trop long !!
-!! enlever les espaces et enelver les majs !!
-!! chat + timer en ms dans le chat + mettre en vers celui qui trouve !!
-!! gerer les nombres dans les noms de fichiers !!
-!! régler le pixelate !!
-!! modifier css flex -> absolute !!
-!! clear le guess input avant d'afficher l'image pour pas tricher !!
-!! faire focus direct dans l'input !!
+﻿!! pas un username trop long !!
 
-!! ajout fleche de retour dans add !!
+!! chat + timer en ms dans le chat + mettre en vers celui qui trouve !!
+
+!! gerer les nombres dans les noms de fichiers !!
+
+!! régler le pixelate !!
+
+!! clear le guess input avant d'afficher l'image pour pas tricher !!
+
 
 !! reduire bruteforce https://libraries.io/npm/express-bouncer !!
 
 
 !! gerer minifier + resize les images !!
 
+!! modifier css flex -> absolute !!
 
 
 

@@ -82,6 +82,8 @@ button {
 }
 
 #message {
+    position: absolute;
+    top: 5%;
     text-align: center;
     font-size: 25px;
     color: white;
