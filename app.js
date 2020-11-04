@@ -67,6 +67,7 @@ app.post('/upload', (req, res) => {
 
       fs.writeFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg", req.file.buffer, (err) => {
         if (err) fs.appendFile(__dirname + '/private/log.txt', "jps" + "\r\n", function (err) {})
+        fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
         res.send(JSON.parse('{"success": true, "msg": "Fichier envoyé !"}'));
         io.emit("newfile", "1");
         copy_array.push(namefile);
