@@ -353,6 +353,6 @@ MigrationBackup/
 .ionide/
 .vscode/settings.json
 dist/app.dev.js
-public/assets/js/dist/game.min.dev.js
+public/assets/js/dist/
 package-lock.json
 private/log.txt
