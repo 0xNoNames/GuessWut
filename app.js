@@ -193,7 +193,7 @@ function pixel(bool = 1) {
     init_arrays();
     clearInterval(interval_img_guess);
     game_state = 0;
-    pixel_state = 100;
+    pixel_state = 0;
     setTimeout(() => {
       interval_img_guess = setInterval(() => pixel(), 125)
       io.emit('message', "");
@@ -206,7 +206,7 @@ function pixel(bool = 1) {
         restartGame("", false);
       } else {
         loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
-          pixel_state + = 0.1;
+          pixel_state += 0.1;
           var canvas = createCanvas(image.width, image.height);
           var ctx = canvas.getContext('2d');
           pixelate(image, ctx, canvas, pixel_state);
