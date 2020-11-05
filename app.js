@@ -49,9 +49,7 @@ app.post('/upload', (req, res) => {
       let namefile = req.body.namefile.replace(/\s/g, '')
 
       for (let i = 0; i < copy_array.length; i++) {
-        if (namefile == copy_array[i].replace(/\d+$/, "")) {
-          nums.push(copy_array[i]);
-        }
+        if (namefile == copy_array[i].replace(/\d+$/, '')) nums.push(copy_array[i]);
       }
 
       for (let i = 0; i < nums.length; i++) {
@@ -62,19 +60,16 @@ app.post('/upload', (req, res) => {
       let indice = Math.max.apply(Math, nums) + 1;
       namefile = namefile + indice;
 
-      let resize;
-
-      if (req.file.height > req.file.width) resize = {
-        heigh: 500,
-        withoutEnlargement: true
-      }
-      else resize = {
-        width: 500,
-        withoutEnlargement: true
-      }
+      // if (dimensions.height >= dimensions.width) 
+      //   if (dimensions.height > 750) resize = 750
+      //   // else resize = dimensions.height
+      // } else {
+      //   if (dimensions.width > 750) resize = 750
+      //   // else resize = dimensions.width
+      // }
 
       sharp(req.file.buffer)
-        .resize(resize)
+        .resize(750, 750)
         .toFormat('jpeg', {
           progressive: true,
           quality: 50
@@ -103,25 +98,31 @@ server.listen(80);
 const userPointsMap = new Map();
 var pixel_state = 0;
 var game_state = 1;
+var img_name;
+var random_nb;
+var copy_array;
+var imgs_array;
 
-var imgs_array = fs.readdirSync(__dirname + '/../guesswut-jpgs/');
-imgs_array.forEach(function (part, index) {
-  this[index] = this[index].slice(0, -4);
-}, imgs_array);
-
-var copy_array = imgs_array.slice();
-
-var random_nb = getRandomInt(imgs_array.length - 1);
-var img_name = copy_array[random_nb];
-copy_array.splice(random_nb, 1);
+init_arrays()
 
 
 //////////////////////////////////
 
 
+function init_arrays() {
+  imgs_array = fs.readdirSync(__dirname + '/../guesswut-jpgs/');
+  imgs_array.forEach(function (part, index) {
+    this[index] = this[index].slice(0, -4);
+  }, imgs_array);
+  copy_array = imgs_array.slice();
+  random_nb = getRandomInt(imgs_array.length - 1);
+  img_name = copy_array[random_nb];
+  copy_array.splice(random_nb, 1);
+}
+
 function authentication(req, res, next) {
   const auth = {
-    login: 'groschien',
+    login: 'grossechienne',
     password: 'Bontoutou'
   }
 
@@ -154,6 +155,7 @@ function restartGame(ws, trouved = 1) {
     io.emit('message', "C'était : " + img_name.replace(/\d+$/, "") + " :/");
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
+    copy_array.splice(random_nb, 1);
   }
 
   if (copy_array.length == 0) copy_array = imgs_array.slice();
@@ -182,29 +184,43 @@ function pixelate(image, ctx, canvas, value) {
 }
 
 
-///////////////////////////
+/////////////////////////
 
 
 function pixel(bool = 1) {
-  if (bool) {
-    if (pixel_state > 24) {
-      restartGame("", false);
-    } else {
+  if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
+    io.emit('message', "Image supprimée.");
+    init_arrays();
+    clearInterval(interval_img_guess);
+    game_state = 0;
+    pixel_state = 100;
+    setTimeout(() => {
+      interval_img_guess = setInterval(() => pixel(), 125)
+      io.emit('message', "");
+      io.emit('restart');
+      game_state = 1;
+    }, 3000);
+  } else {
+    if (bool) {
+      if (pixel_state > 24) {
+        restartGame("", false);
+      } else {
+        loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
+          pixel_state + = 0.1;
+          var canvas = createCanvas(image.width, image.height);
+          var ctx = canvas.getContext('2d');
+          pixelate(image, ctx, canvas, pixel_state);
+          io.emit('image', canvas.toDataURL());
+        })
+      }
+    } else { // Image sans pixelisation
       loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
-        pixel_state += 0.1;
         var canvas = createCanvas(image.width, image.height);
         var ctx = canvas.getContext('2d');
-        pixelate(image, ctx, canvas, pixel_state);
+        ctx.drawImage(image, 0, 0);
         io.emit('image', canvas.toDataURL());
       })
     }
-  } else { // Image sans pixelisation
-    loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
-      var canvas = createCanvas(image.width, image.height);
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(image, 0, 0);
-      io.emit('image', canvas.toDataURL());
-    })
   }
 };
 

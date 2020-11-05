@@ -14,3 +14,10 @@
 
 
 !! pas oublier d'enlever les passwords et username d'authent avant github !!
+
+afficher le nom du fichier à la place pour le "c'était"
+
+ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
+
+
+? site stereomix catjam qui accelere selon le btm de la musique entendue?
