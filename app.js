@@ -198,7 +198,7 @@ function restartGame(trouved = 1) {
 
   setTimeout(() => {
     message_json.message = "";
-    interval_img_guess = setInterval(() => pixel(), 125);
+    interval_img_guess = setInterval(() => pixel(), 150);
     timer.Start();
     io.emit('game_msg', JSON.stringify(message_json));
     io.emit('restart');
@@ -208,8 +208,8 @@ function restartGame(trouved = 1) {
 
 function pixelate(image, ctx, canvas, value) {
   var size = value / 100,
-    w = canvas.width * size,
-    h = canvas.height * size;
+    w = (canvas.width * size).toFixed(1),
+    h = (canvas.height * size).toFixed(1);
 
   ctx.drawImage(image, 0, 0, w, h);
 
@@ -233,18 +233,18 @@ function pixel(bool = 1) {
     game_state = 0;
     pixel_state = 0;
     setTimeout(() => {
-      interval_img_guess = setInterval(() => pixel(), 125)
+      interval_img_guess = setInterval(() => pixel(), 150)
       io.emit('game_msg', "");
       io.emit('restart');
       game_state = 1;
     }, 3000);
   } else {
     if (bool) {
-      if (pixel_state > 28) {
+      if (pixel_state > 12) {
         restartGame(false);
       } else {
         loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
-          pixel_state += 0.1;
+          pixel_state += 0.0625;
           var canvas = createCanvas(image.width, image.height);
           var ctx = canvas.getContext('2d');
           pixelate(image, ctx, canvas, pixel_state);
@@ -268,7 +268,7 @@ function pixel(bool = 1) {
 
 var interval_img_guess = setInterval(() => {
   pixel();
-}, 125);
+}, 150);
 const timer = new StopWatch()
 
 timer.Start()
