@@ -65,16 +65,8 @@ app.post('/upload', (req, res) => {
       let indice = Math.max.apply(Math, nums) + 1;
       namefile = namefile + indice;
 
-      // if (dimensions.height >= dimensions.width) 
-      //   if (dimensions.height > 750) resize = 750
-      //   // else resize = dimensions.height
-      // } else {
-      //   if (dimensions.width > 750) resize = 750
-      //   // else resize = dimensions.width
-      // }
-
       sharp(req.file.buffer)
-        .resize(750, 750)
+        .resize(800, 800)
         .toFormat('jpeg', {
           progressive: true,
           quality: 50
@@ -217,6 +209,7 @@ function pixelate(image, ctx, canvas, value) {
   ctx.mozImageSmoothingEnabled = false;
   ctx.webkitImageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
+  ctx.patternQuality = 'fast';
 
   ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height)
 }
@@ -227,14 +220,16 @@ function pixelate(image, ctx, canvas, value) {
 
 function pixel(bool = 1) {
   if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
-    io.emit('game_msg', "Image supprimée.");
+    message_json.message = "Image supprimée.";
+    io.emit('game_msg', JSON.stringify(message_json));
     init_arrays();
     clearInterval(interval_img_guess);
     game_state = 0;
     pixel_state = 0;
     setTimeout(() => {
       interval_img_guess = setInterval(() => pixel(), 150)
-      io.emit('game_msg', "");
+      message_json.message = "";
+      io.emit('game_msg', JSON.stringify(message_json));
       io.emit('restart');
       game_state = 1;
     }, 3000);
