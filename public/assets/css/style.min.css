@@ -21,7 +21,7 @@ body {
     justify-content: space-evenly;
     color: white;
     font: 10px arial;
-    background: linear-gradient(-45deg, hsl(0, 72%, 49%), hsl(135, 72%, 49%), hsl(225, 72%, 49%), hsl(315, 72%, 49%));
+    background: linear-gradient(-45deg, hsl(0, 72%, 49%), hsl(225, 72%, 49%), hsl(315, 72%, 49%));
     background-size: 600% 600%;
     -webkit-animation: gradient 100s linear infinite;
     animation: gradient 100s linear infinite;
@@ -76,32 +76,51 @@ input::placeholder {
 }
 
 #chat_div {
-    font-size: 200%;
-    max-height: 25vh;
-    width: 15vh;
+    max-height: 60vh;
+    width: 15vw;
+    overflow-y: auto;
+}
+
+#chat_div {
+    font-size: 150%;
     overflow: auto;
+}
+
+#chat_div div {
+    padding: 5px 0 5px 10px;
+    overflow-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+}
+
+#chat_user {
+    color: #fbff00;
+}
+
+.chat_win {
+    background-color: rgba(0, 255, 0, 0.5);
+}
+
+.chat_black {
+    background-color: rgb(100, 100, 100, 0.60);
+}
+
+.chat_grey {
+    background-color: rgb(75, 75, 75, 0.60);
 }
 
 #score_div {
-    /* margin-right: auto; */
+    margin: 0 2.5vw 0 2.5vw;
     font-size: 200%;
     max-height: 25vh;
     overflow: auto;
+    width: 10vw;
 }
 
-#score_msg {
-    width: 15vh;
-    overflow: auto;
-}
-
-#score_msg ul {
+#score_div ul {
     display: flex;
     justify-content: space-between;
 }
-
-/* #score_msg span:last-child {
-    padding: 0 15px 0 10px;
-} */
 
 
 /* -- -- -- -- -- -- -- -- -- -- -- -- ADD CSS -- -- -- -- -- -- -- -- -- -- -- -- */

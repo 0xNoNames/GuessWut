@@ -5,10 +5,8 @@
 
 
 
+!! un couleur par personne dans le chat (dans le user_array mettre un valeur couleur qui s'incrémente) !!
 
-!! chat + timer en ms dans le chat + mettre en vers celui qui trouve + rouge quand pas trouved + espaces !!
-
-!! couleur verte pour le message quand réussi !! 
 
 
 drag and drop ?
@@ -16,25 +14,16 @@ drag and drop ?
 
 
 
-
-
-
 afficher le nom du fichier à la place pour le "c'était"
 
-ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
+quand upload ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
 
 
 
-
-
-!! modifier css flex -> absolute !!
 
 
 
 !! reduire bruteforce https://libraries.io/npm/express-bouncer !!
-
-
-
 ? site stereomix catjam qui accelere selon le btm de la musique entendue?
 
 
