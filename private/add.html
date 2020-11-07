@@ -13,16 +13,16 @@
 </head>
 
 <body>
-    <form id="uploadForm">
-        <input type="text" name="namefile" autocomplete="off" placeholder="Mot à deviner" pattern="[a-zA-Z]*"
-            id="uploadInput" required autofocus maxlength="15" /></div>
-        <label for="file" id="label-uploadFile">Choisir une image</label>
-        <input type="file" name="file" accept=".jpg, .jpeg" id="input-uploadFile" required /></div>
-        <input type="submit" value="Envoyer" id="uploadButton" />
+    <form id="upload_form">
+        <input type="text" name="namefile" id="upload_text" autocomplete="off" placeholder="Mot à deviner"
+            pattern="[a-zA-Z]*" maxlength="15" required autofocus /></div>
+        <label for="file" id="upload_label">Choisir une image</label>
+        <input type="file" name="file" id="upload_file" accept=".jpg, .jpeg, .png" required /></div>
+        <input type="submit" value="Envoyer" id="upload_button" />
     </form>
-    <button id="backButton">Retour</button>
+    <button id="back_button">Retour</button>
 
-    <div id="alert_msg"></div>
+    <div id="upload_msg"></div>
 
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/upload.min.js"></script>

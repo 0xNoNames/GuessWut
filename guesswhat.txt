@@ -1,23 +1,41 @@
-﻿!! chat + timer en ms dans le chat + mettre en vers celui qui trouve + rouge quand pas trouved + espaces !!
-
-!! couleur verte pour le message quand réussi !! 
-
-!! gerer les nombres dans les noms de fichiers !!
+﻿!! gerer les nombres dans les noms de fichiers !!
 ( porot-1.jpg regex pour premier /*-[0-9]'.jpg'/)
 
 !! régler le pixelate !!
 
-!! reduire bruteforce https://libraries.io/npm/express-bouncer !!
 
 
-!! modifier css flex -> absolute !!
+
+!! chat + timer en ms dans le chat + mettre en vers celui qui trouve + rouge quand pas trouved + espaces !!
+
+!! couleur verte pour le message quand réussi !! 
 
 
-!! pas oublier d'enlever les passwords et username d'authent avant github !!
+drag and drop ?
+
+
+
+
+
+
 
 afficher le nom du fichier à la place pour le "c'était"
 
 ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
 
 
+
+
+
+!! modifier css flex -> absolute !!
+
+
+
+!! reduire bruteforce https://libraries.io/npm/express-bouncer !!
+
+
+
 ? site stereomix catjam qui accelere selon le btm de la musique entendue?
+
+
+!! pas oublier d'enlever les passwords et username d'authent avant github !!

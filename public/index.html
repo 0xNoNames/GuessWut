@@ -7,7 +7,7 @@
     <meta property="og:type" content="game" />
     <meta property="og:url" content="https://www.arthurdev.fr" />
     <meta property="og:description" content="Devine le mot !" />
-    <meta name="theme-color" content="#4682b4">  
+    <meta name="theme-color" content="#4682b4">
     <title>GuessWut</title>
     <link rel="icon" type="image/png" sizes="256x256" href="/assets/favicon/favicon-256x256.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
@@ -17,26 +17,12 @@
 </head>
 
 <body>
-    <div id="scoreboard">
-        <nav id="navscores" style="display: none;"></nav>
-    </div>
-    <div id="image" style="display: none;"></div>
     <div id="username_div">
         <form id="username_form" action="">
-            <input id="username_input" autocomplete="off" placeholder="Entrez un pseudo..." maxlength="13" autofocus />
-            <!--<button>ENTRER</button> -->
+            <input id="username_input" autocomplete="off" placeholder="Entrez un pseudo..." maxlength="12" autofocus />
         </form>
-        <div id="alert_msg" style="display: none;"></div>
+        <div id="username_msg"></div>
     </div>
-
-    <div id="guess_div">
-        <form id="guess_form" action="" style="display: none;">
-            <input id="guess_input" autocomplete="off" placeholder="Essayez un mot..." />
-            <!--<button>GUESS</button>-->
-        </form>
-    </div>
-    <div id="message" style="display: none;"></div>
-
     <script src="/socket.io/socket.io.js"></script>
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/game.min.js"></script>

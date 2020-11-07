@@ -38,12 +38,12 @@ const upload = multer({
 
 app.post('/upload', (req, res) => {
   upload(req, res, async function (err) {
-    if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "msg": "Mot manquant."}'));
-    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
+    if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "msg_add": "Mot manquant."}'));
+    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "msg_add": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
     else if (req.file.mimetype != "image/jpeg" && req.file.mimetype != "image/png") {
       fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) {});
-      res.send(JSON.parse('{"success": false, "msg": "Seulement des fichiers jped et png."}'));
-    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "msg":"Pas de nombres dans le mot à deviner"}'));
+      res.send(JSON.parse('{"success": false, "msg_add": "Seulement des fichiers jped et png."}'));
+    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "msg_add":"Pas de nombres dans le mot à deviner"}'));
     else {
       let nums = [];
       let namefile = req.body.namefile.replace(/\s/g, '')
@@ -77,7 +77,7 @@ app.post('/upload', (req, res) => {
         .toFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg")
         .then(() => {
           fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
-          res.send(JSON.parse('{"success": true, "msg": "Fichier envoyé !"}'));
+          res.send(JSON.parse('{"success": true, "msg_add": "Fichier envoyé !"}'));
           io.emit("newfile", "1");
           copy_array.push(namefile);
         })
@@ -145,14 +145,14 @@ function restartGame(ws, trouved = 1) {
   pixel_state = 0;
   pixel(0);
   if (trouved) {
-    io.emit('message', ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, ""));
+    io.emit('game_msg', ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, ""));
     userPointsMap.set(ws.username, ++ws.point);
     io.emit('update', JSON.stringify(Array.from(userPointsMap)));
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
     copy_array.splice(random_nb, 1);
   } else {
-    io.emit('message', "C'était : " + img_name.replace(/\d+$/, "") + " :/");
+    io.emit('game_msg', "C'était : " + img_name.replace(/\d+$/, "") + " :/");
     random_nb = getRandomInt(copy_array.length - 1);
     img_name = copy_array[random_nb];
     copy_array.splice(random_nb, 1);
@@ -162,7 +162,7 @@ function restartGame(ws, trouved = 1) {
 
   setTimeout(() => {
     interval_img_guess = setInterval(() => pixel(), 125)
-    io.emit('message', "");
+    io.emit('game_msg', "");
     io.emit('restart');
     game_state = 1;
   }, 3000);
@@ -189,20 +189,20 @@ function pixelate(image, ctx, canvas, value) {
 
 function pixel(bool = 1) {
   if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
-    io.emit('message', "Image supprimée.");
+    io.emit('game_msg', "Image supprimée.");
     init_arrays();
     clearInterval(interval_img_guess);
     game_state = 0;
     pixel_state = 0;
     setTimeout(() => {
       interval_img_guess = setInterval(() => pixel(), 125)
-      io.emit('message', "");
+      io.emit('game_msg', "");
       io.emit('restart');
       game_state = 1;
     }, 3000);
   } else {
     if (bool) {
-      if (pixel_state > 24) {
+      if (pixel_state > 30) {
         restartGame("", false);
       } else {
         loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
@@ -244,15 +244,15 @@ io.on('connection', (ws) => {
   ws.on('username', (username) => {
     let encoded_msg = encodeURI(username).replace(/%20/g, "", '');
     if (!userPointsMap.has(encoded_msg)) {
-      if (encoded_msg.length > 12) ws.emit('alert_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
+      if (encoded_msg.length > 12) ws.emit('username_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
       else {
         ws.username = encoded_msg;
         ws.point = 0;
         userPointsMap.set(encoded_msg, ws.point);
-        ws.emit('ready', "1");
+        ws.emit('ready');
         io.emit('update', JSON.stringify(Array.from(userPointsMap)));
       }
-    } else ws.emit('alert_msg', "Utilisateur déjà connecté.");
+    } else ws.emit('username_msg', "Utilisateur déjà connecté.");
   });
 
   ws.on('guess', (msg) => {
@@ -261,7 +261,7 @@ io.on('connection', (ws) => {
       io.emit('chat', ws.username + ' : ' + encoded_msg);
       if (game_state) {
         if (encoded_msg == img_name.replace(/\d+$/, "")) restartGame(ws);
-        else ws.emit('message', "Pas trouved");
+        else ws.emit('game_msg', "Pas trouved");
       }
     }
   });
