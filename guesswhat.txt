@@ -5,25 +5,17 @@
 !! Drag and drop upload !!
 
 
-!! Ajouter /admin pour aller soit : dans upload ou dans management des fichiers !!
 
+!! Ajouter recadrage de l'image directement !!
+
+!! Ajouter /admin pour aller soit : dans upload ou dans management des fichiers !!
 
 !! Ajouter anti-flood (compteur de socket guess et si > 50 en 1 seconde ws.disconnect) !!
 
 
-afficher le nom du fichier à la place pour le "c'était"
 
+(if canvas < canvas original) faire un truc (jsp)
 
-quand upload ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
-
-
-
-
-
-
-
-
-!! reduire bruteforce https://libraries.io/npm/express-bouncer !!
 
 
 ? site stereomix catjam qui accelere selon le btm de la musique entendue?

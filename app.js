@@ -41,12 +41,12 @@ app.post('/upload', (req, res) => {
     if (req.body.namefile === "") res.send(JSON.parse('{"success": 0, "upload_add": "Mot manquant."}'));
     else if (err || req.file === undefined) res.send(JSON.parse('{"success": 0, "upload_add": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
     else if (req.file.mimetype != "image/jpeg" && req.file.mimetype != "image/png") {
-      fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) {});
+      fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) { });
       res.send(JSON.parse('{"success": 0, "upload_add": "Seulement des fichiers jped et png."}'));
     } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": 0, "upload_add":"Pas de nombres dans le mot à deviner (pour l\'instant")}'));
     else {
       let nums = [];
-      let namefile = req.body.namefile.replace(/\s/g, '')
+      let namefile = req.body.namefile.replace(/ +(?= )/g,'');
 
       for (let i = 0; i < copy_array.length; i++) {
         if (namefile == copy_array[i].replace(/\d+$/, '')) nums.push(copy_array[i]);
@@ -68,13 +68,13 @@ app.post('/upload', (req, res) => {
         })
         .toFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg")
         .then(() => {
-          fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
+          fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) { });
           res.send(JSON.parse('{"success": 1, "upload_add": "Fichier envoyé !"}'));
           io.emit("newfile", 1);
           copy_array.push(namefile);
         })
         .catch((err) => {
-          fs.appendFile(__dirname + '/private/log.txt', err.fileName + "; " + err.message + "; " + err.lineNumber + "\r\n", function (err) {})
+          fs.appendFile(__dirname + '/private/log.txt', err.fileName + "; " + err.message + "; " + err.lineNumber + "\r\n", function (err) { })
         });
     }
   })
@@ -194,6 +194,7 @@ function restartGame(ws, trouved = 1) {
     interval_img_guess = setInterval(() => pixel(""), 150);
     timer.Reset()
     timer.Start();
+    message_json.message = "";
     io.emit('game_msg', JSON.stringify(message_json));
     game_state = 1;
   }, 3000);
@@ -278,7 +279,7 @@ io.on('connection', (ws) => {
   });
 
   ws.on('username', (username) => {
-    let encoded_msg = encodeURI(username).replace(/%20/g, "", '');
+    let encoded_msg = decodeURI(encodeURI(username));
     if (!score_map.has(encoded_msg)) {
       if (encoded_msg.length > 12) ws.emit('username_msg', "Taille du nom d'utilisateur doit être inférieure à 12.")
       else {
@@ -302,7 +303,8 @@ io.on('connection', (ws) => {
       chat_json.color = score_map.get(ws.username)[1]
       if (game_state && timer.Elapsed() > 1) {
         let encoded_msg = msg.toLowerCase().replace(/\s/g, "", '');
-        if (encoded_msg == img_name.replace(/\d+$/, "")) {
+        let guess_msg = img_name.toLowerCase().replace(/\d+$/, "");
+        if (encoded_msg == guess_msg) {
           restartGame(ws);
         }
       }
