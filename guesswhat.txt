@@ -1,25 +1,24 @@
 ﻿!! gerer les nombres dans les noms de fichiers !!
 ( porot-1.jpg regex pour premier /*-[0-9]'.jpg'/)
 
-!! régler le pixelate !!
-
-
 
 !! un couleur par personne dans le chat (dans le user_array mettre un valeur couleur qui s'incrémente) !!
 
 
-
 drag and drop ?
 
+Régler freeze quand image trouved
 
+
+
+ajouter /admin pour aller au choix dans upload ou dans management des fichiers
+
+Ajouter un contre flood (compteur de socket guess et si > 50 en 1 seconde ws.disconnect)
 
 
 afficher le nom du fichier à la place pour le "c'était"
 
 quand upload ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
-
-
-
 
 
 

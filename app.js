@@ -15,11 +15,6 @@ const {
   loadImage
 } = require('canvas');
 
-let message_json = {
-  win: false,
-  message: ""
-}
-
 
 ////////////////////////////////
 
@@ -43,12 +38,12 @@ const upload = multer({
 
 app.post('/upload', (req, res) => {
   upload(req, res, async function (err) {
-    if (req.body.namefile === "") res.send(JSON.parse('{"success": false, "upload_add": "Mot manquant."}'));
-    else if (err || req.file === undefined) res.send(JSON.parse('{"success": false, "upload_add": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
+    if (req.body.namefile === "") res.send(JSON.parse('{"success": 0, "upload_add": "Mot manquant."}'));
+    else if (err || req.file === undefined) res.send(JSON.parse('{"success": 0, "upload_add": "Pas de fichier ou fichier trop volumineux. (max 10MB)"}'));
     else if (req.file.mimetype != "image/jpeg" && req.file.mimetype != "image/png") {
       fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) {});
-      res.send(JSON.parse('{"success": false, "upload_add": "Seulement des fichiers jped et png."}'));
-    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": false, "upload_add":"Pas de nombres dans le mot à deviner"}'));
+      res.send(JSON.parse('{"success": 0, "upload_add": "Seulement des fichiers jped et png."}'));
+    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": 0, "upload_add":"Pas de nombres dans le mot à deviner"}'));
     else {
       let nums = [];
       let namefile = req.body.namefile.replace(/\s/g, '')
@@ -68,13 +63,13 @@ app.post('/upload', (req, res) => {
       sharp(req.file.buffer)
         .resize(800, 800)
         .toFormat('jpeg', {
-          progressive: true,
+          progressive: 1,
           quality: 50
         })
         .toFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg")
         .then(() => {
           fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
-          res.send(JSON.parse('{"success": true, "upload_add": "Fichier envoyé !"}'));
+          res.send(JSON.parse('{"success": 1, "upload_add": "Fichier envoyé !"}'));
           io.emit("newfile", "1");
           copy_array.push(namefile);
         })
@@ -92,12 +87,14 @@ server.listen(80);
 //////////////////////////////////
 
 const score_map = new Map();
-var pixel_state = 0;
+var pixel_state = -0.0625;
 var game_state = 1;
 var img_name;
 var random_nb;
 var copy_array;
 var imgs_array;
+var message_json = {};
+var chat_json = {};
 
 init_arrays()
 
@@ -109,15 +106,15 @@ class StopWatch {
   constructor() {
     this.startTime = 0;
     this.pauseTime = 0;
-    this.running = false;
+    this.running = 0;
   }
   Start() {
     this.startTime = currentTime();
-    this.running = true;
+    this.running = 1;
   }
   Pause() {
     this.pauseTime = this.Elapsed();
-    this.running = false;
+    this.running = 0;
   }
   Reset() {
     this.startTime = currentTime();
@@ -167,33 +164,37 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function restartGame(trouved = 1) {
+function restartGame(ws, trouved = 1) {
   clearInterval(interval_img_guess);
-  timer.Pause()
-  timer.Reset()
   game_state = 0;
-  pixel_state = 0;
+  pixel_state = -0.0625;
+
   pixel(0);
 
-  if (!trouved) {
+  if (trouved) {
+    message_json.win = 1;
+    message_json.message = ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, "");
+    score_map.set(ws.username, ++ws.point);
+    io.emit('update', JSON.stringify(Array.from(score_map)));
+    chat_json.win = 1;
+  } else {
     message_json.win = 0;
     message_json.message = "C'était : " + img_name.replace(/\d+$/, "") + " :/";
-    io.emit('game_msg', JSON.stringify(message_json));
   }
+
+  io.emit('game_msg', JSON.stringify(message_json));
 
   random_nb = getRandomInt(copy_array.length - 1);
   img_name = copy_array[random_nb];
   copy_array.splice(random_nb, 1);
 
-
   if (copy_array.length == 0) copy_array = imgs_array.slice();
 
   setTimeout(() => {
-    message_json.message = "";
     interval_img_guess = setInterval(() => pixel(), 150);
+    timer.Reset()
     timer.Start();
     io.emit('game_msg', JSON.stringify(message_json));
-    io.emit('restart');
     game_state = 1;
   }, 3000);
 }
@@ -205,10 +206,10 @@ function pixelate(image, ctx, canvas, value) {
 
   ctx.drawImage(image, 0, 0, w, h);
 
-  ctx.msImageSmoothingEnabled = false;
-  ctx.mozImageSmoothingEnabled = false;
-  ctx.webkitImageSmoothingEnabled = false;
-  ctx.imageSmoothingEnabled = false;
+  ctx.msImageSmoothingEnabled = 0;
+  ctx.mozImageSmoothingEnabled = 0;
+  ctx.webkitImageSmoothingEnabled = 0;
+  ctx.imageSmoothingEnabled = 0;
   ctx.patternQuality = 'fast';
 
   ctx.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height)
@@ -219,24 +220,23 @@ function pixelate(image, ctx, canvas, value) {
 
 
 function pixel(bool = 1) {
-  if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
-    message_json.message = "Image supprimée.";
-    io.emit('game_msg', JSON.stringify(message_json));
-    init_arrays();
-    clearInterval(interval_img_guess);
-    game_state = 0;
-    pixel_state = 0;
-    setTimeout(() => {
-      interval_img_guess = setInterval(() => pixel(), 150)
-      message_json.message = "";
+  if (bool) {
+    if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
+      message_json.message = "Image supprimée.";
       io.emit('game_msg', JSON.stringify(message_json));
-      io.emit('restart');
-      game_state = 1;
-    }, 3000);
-  } else {
-    if (bool) {
+      init_arrays();
+      clearInterval(interval_img_guess);
+      game_state = 0;
+      pixel_state = -0.0625;
+      setTimeout(() => {
+        interval_img_guess = setInterval(() => pixel(), 150)
+        message_json.message = "";
+        io.emit('game_msg', JSON.stringify(message_json));
+        game_state = 1;
+      }, 3000);
+    } else {
       if (pixel_state > 12) {
-        restartGame(false);
+        restartGame(ws, 0);
       } else {
         loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
           pixel_state += 0.0625;
@@ -246,14 +246,14 @@ function pixel(bool = 1) {
           io.emit('image', canvas.toDataURL());
         })
       }
-    } else { // Image sans pixelisation
-      loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
-        var canvas = createCanvas(image.width, image.height);
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0);
-        io.emit('image', canvas.toDataURL());
-      })
     }
+  } else { // Image sans pixelisation
+    loadImage(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg').then((image) => {
+      var canvas = createCanvas(image.width, image.height);
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      io.emit('image', canvas.toDataURL());
+    })
   }
 };
 
@@ -267,7 +267,6 @@ var interval_img_guess = setInterval(() => {
 const timer = new StopWatch()
 
 timer.Start()
-
 
 io.on('connection', (ws) => {
 
@@ -293,31 +292,24 @@ io.on('connection', (ws) => {
   });
 
   ws.on('guess', (msg) => {
+    chat_json.user = ws.username;
+    chat_json.time = timer.Elapsed().toFixed(3);
+    chat_json.chat_msg = msg;
+    chat_json.me = 1;
+    chat_json.win = 0;
+
     if (score_map.has(ws.username)) {
-      let chat_json = {
-        me: true,
-        user: ws.username,
-        time: timer.Elapsed().toFixed(3),
-        chat_msg: msg,
-        win: false
-      };
-      if (game_state) {
+      if (game_state && timer.Elapsed() > 1) {
         let encoded_msg = msg.toLowerCase().replace(/\s/g, "", '');
         if (encoded_msg == img_name.replace(/\d+$/, "")) {
-          message_json.win = 1;
-          message_json.message = ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, "");
-          io.emit('game_msg', JSON.stringify(message_json));
-          score_map.set(ws.username, ++ws.point);
-          io.emit('update', JSON.stringify(Array.from(score_map)));
-          chat_json.win = true;
-          restartGame();
+          restartGame(ws);
         }
         ws.emit('chat', JSON.stringify(chat_json));
         chat_json.me = 0;
         ws.broadcast.emit('chat', JSON.stringify(chat_json));
       } else {
         ws.emit('chat', JSON.stringify(chat_json));
-        chat_json.me = 0
+        chat_json.me = 0;
         ws.broadcast.emit('chat', JSON.stringify(chat_json));
       }
     } else {
@@ -327,6 +319,6 @@ io.on('connection', (ws) => {
 });
 
 
-// process.on("uncaughtException", function (err) {
-//   process.exit();
-// });
+process.on("uncaughtException", function (err) {
+  process.exit();
+});
