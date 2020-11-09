@@ -41,6 +41,7 @@ input::placeholder {
 #username_div,
 #guess_div,
 #game_msg,
+#upload_msg,
 #uploadForm,
 #back_button {
     position: absolute;
@@ -150,6 +151,12 @@ input::placeholder {
 
 #upload_text {
     margin: 0 auto 25px auto;
+}
+
+#upload_msg {
+    top: 75%;
+    color: red;
+    font-size: 20px;
 }
 
 #back_button {

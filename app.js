@@ -43,7 +43,7 @@ app.post('/upload', (req, res) => {
     else if (req.file.mimetype != "image/jpeg" && req.file.mimetype != "image/png") {
       fs.appendFile(__dirname + '/private/log.txt', req.file.mimetype + " non autorisé." + "\r\n", function (err) {});
       res.send(JSON.parse('{"success": 0, "upload_add": "Seulement des fichiers jped et png."}'));
-    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": 0, "upload_add":"Pas de nombres dans le mot à deviner"}'));
+    } else if (/\d/.test(req.body.namefile)) res.send(JSON.parse('{"success": 0, "upload_add":"Pas de nombres dans le mot à deviner (pour l\'instant")}'));
     else {
       let nums = [];
       let namefile = req.body.namefile.replace(/\s/g, '')
@@ -63,7 +63,7 @@ app.post('/upload', (req, res) => {
       sharp(req.file.buffer)
         .resize(800, 800)
         .toFormat('jpeg', {
-          progressive: 1,
+          progressive: true,
           quality: 50
         })
         .toFile(__dirname + "/../guesswut-jpgs/" + namefile + ".jpg")

@@ -2,25 +2,30 @@
 ( porot-1.jpg regex pour premier /*-[0-9]'.jpg'/)
 
 
-!! un couleur par personne dans le chat (dans le user_array mettre un valeur couleur qui s'incrémente) !!
-
-mettre fond sombre derriere pseudo score
-
-drag and drop ?
+!! Drag and drop upload !!
 
 
-ajouter /admin pour aller au choix dans upload ou dans management des fichiers
+!! Ajouter /admin pour aller soit : dans upload ou dans management des fichiers !!
 
-Ajouter un contre flood (compteur de socket guess et si > 50 en 1 seconde ws.disconnect)
+
+!! Ajouter anti-flood (compteur de socket guess et si > 50 en 1 seconde ws.disconnect) !!
 
 
 afficher le nom du fichier à la place pour le "c'était"
+
 
 quand upload ne pas virer les %20 mais si l'input de l'user == guessword sans les espaces
 
 
 
+
+
+
+
+
 !! reduire bruteforce https://libraries.io/npm/express-bouncer !!
+
+
 ? site stereomix catjam qui accelere selon le btm de la musique entendue?
 
 
