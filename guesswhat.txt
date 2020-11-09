@@ -4,11 +4,9 @@
 
 !! un couleur par personne dans le chat (dans le user_array mettre un valeur couleur qui s'incrémente) !!
 
+mettre fond sombre derriere pseudo score
 
 drag and drop ?
-
-Régler freeze quand image trouved
-
 
 
 ajouter /admin pour aller au choix dans upload ou dans management des fichiers

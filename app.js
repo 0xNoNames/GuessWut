@@ -70,7 +70,7 @@ app.post('/upload', (req, res) => {
         .then(() => {
           fs.appendFile(__dirname + '/private/log.txt', namefile + " ajouté." + "\r\n", function (err) {});
           res.send(JSON.parse('{"success": 1, "upload_add": "Fichier envoyé !"}'));
-          io.emit("newfile", "1");
+          io.emit("newfile", 1);
           copy_array.push(namefile);
         })
         .catch((err) => {
@@ -169,12 +169,12 @@ function restartGame(ws, trouved = 1) {
   game_state = 0;
   pixel_state = -0.0625;
 
-  pixel(0);
+  pixel("", 0);
 
   if (trouved) {
     message_json.win = 1;
     message_json.message = ws.username + " le boss," + " c'était : " + img_name.replace(/\d+$/, "");
-    score_map.set(ws.username, ++ws.point);
+    score_map.set(ws.username, [++ws.point, score_map.get(ws.username)[1]]);
     io.emit('update', JSON.stringify(Array.from(score_map)));
     chat_json.win = 1;
   } else {
@@ -191,7 +191,7 @@ function restartGame(ws, trouved = 1) {
   if (copy_array.length == 0) copy_array = imgs_array.slice();
 
   setTimeout(() => {
-    interval_img_guess = setInterval(() => pixel(), 150);
+    interval_img_guess = setInterval(() => pixel(""), 150);
     timer.Reset()
     timer.Start();
     io.emit('game_msg', JSON.stringify(message_json));
@@ -219,7 +219,7 @@ function pixelate(image, ctx, canvas, value) {
 /////////////////////////
 
 
-function pixel(bool = 1) {
+function pixel(ws, bool = 1) {
   if (bool) {
     if (!fs.existsSync(__dirname + '/../guesswut-jpgs/' + img_name + '.jpg')) {
       message_json.message = "Image supprimée.";
@@ -229,7 +229,7 @@ function pixel(bool = 1) {
       game_state = 0;
       pixel_state = -0.0625;
       setTimeout(() => {
-        interval_img_guess = setInterval(() => pixel(), 150)
+        interval_img_guess = setInterval(() => pixel(ws), 150)
         message_json.message = "";
         io.emit('game_msg', JSON.stringify(message_json));
         game_state = 1;
@@ -262,7 +262,7 @@ function pixel(bool = 1) {
 
 
 var interval_img_guess = setInterval(() => {
-  pixel();
+  pixel("");
 }, 150);
 const timer = new StopWatch()
 
@@ -284,7 +284,7 @@ io.on('connection', (ws) => {
       else {
         ws.username = encoded_msg;
         ws.point = 0;
-        score_map.set(encoded_msg, ws.point);
+        score_map.set(encoded_msg, [ws.point, "hsl(" + 360 * Math.random() + ',100%,' + (60 + 10 * Math.random()) + '%)']);
         ws.emit('ready');
         io.emit('update', JSON.stringify(Array.from(score_map)));
       }
@@ -299,19 +299,16 @@ io.on('connection', (ws) => {
     chat_json.win = 0;
 
     if (score_map.has(ws.username)) {
+      chat_json.color = score_map.get(ws.username)[1]
       if (game_state && timer.Elapsed() > 1) {
         let encoded_msg = msg.toLowerCase().replace(/\s/g, "", '');
         if (encoded_msg == img_name.replace(/\d+$/, "")) {
           restartGame(ws);
         }
-        ws.emit('chat', JSON.stringify(chat_json));
-        chat_json.me = 0;
-        ws.broadcast.emit('chat', JSON.stringify(chat_json));
-      } else {
-        ws.emit('chat', JSON.stringify(chat_json));
-        chat_json.me = 0;
-        ws.broadcast.emit('chat', JSON.stringify(chat_json));
       }
+      ws.emit('chat', JSON.stringify(chat_json));
+      chat_json.me = 0;
+      ws.broadcast.emit('chat', JSON.stringify(chat_json));
     } else {
       ws.emit('refresh');
     }
@@ -319,6 +316,6 @@ io.on('connection', (ws) => {
 });
 
 
-process.on("uncaughtException", function (err) {
-  process.exit();
-});
+// process.on("uncaughtException", function (err) {
+//   process.exit();
+// });

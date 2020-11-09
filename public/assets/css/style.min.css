@@ -93,24 +93,20 @@ input::placeholder {
     overflow: hidden;
 }
 
-#chat_user {
-    color: #fbff00;
-}
-
 #chat_user_win {
-    background-color: rgba(251, 255, 0, 0.5)
+    background-color: rgba(255, 255, 0, 0.6)
 }
 
 .chat_win {
-    background-color: rgba(0, 255, 0, 0.5);
+    background-color: rgba(0, 255, 0, 0.6);
 }
 
 .chat_black {
-    background-color: rgb(100, 100, 100, 0.60);
+    background-color: rgb(100, 100, 100, 0.6);
 }
 
 .chat_grey {
-    background-color: rgb(75, 75, 75, 0.60);
+    background-color: rgb(75, 75, 75, 0.6);
 }
 
 #score_div {
@@ -124,6 +120,9 @@ input::placeholder {
 #score_div ul {
     display: flex;
     justify-content: space-between;
+    margin: 5px 0 5px 0;
+    padding: 3px 10px 3px 10px;
+    border-radius: 10px;
 }
 
 
