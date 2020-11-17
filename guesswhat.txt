@@ -4,7 +4,7 @@
 
 !! Drag and drop upload !!
 
-
+!! Réparer le classement des joueurs !!
 
 !! Ajouter recadrage de l'image directement !!
 
