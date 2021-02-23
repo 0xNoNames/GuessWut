@@ -25,6 +25,7 @@ app.use(hpp());
 
 app.use(express.static(__dirname + '/public'));
 
+
 app.get('/add', authentication, (req, res) => {
   res.sendFile(__dirname + '/private/add.html')
 })
@@ -81,7 +82,7 @@ app.post('/upload', (req, res) => {
 })
 
 
-server.listen(80);
+server.listen(8000);
 
 
 //////////////////////////////////
@@ -318,6 +319,6 @@ io.on('connection', (ws) => {
 });
 
 
-// process.on("uncaughtException", function (err) {
-//   process.exit();
-// });
+process.on("uncaughtException", function (err) {
+   process.exit();
+});
